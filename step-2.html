@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Step 2 — Find the debt hurting you most</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Karla:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F4ED; --card:#FFFFFF; --line:#C9C2B4;
+    --ink:#141D22; --body:#22303A; --mute:#465A66; --faint:#5B6E78;
+    --teal:#15665A; --teal-lt:#E2EFEB;
+    --coin:#9A5411; --coin-lt:#F7EDE1;
+    --hot:#8A2E12; --hot-lt:#F7E5DE;
+    --s1:8px; --s2:14px; --s3:22px; --s4:34px; --s5:52px;
+    --r-sm:10px; --r-md:14px; --r-lg:18px;
+    --w-text:560px; --w-card:440px; --w-field:320px;
+    --bd:2px; --fs:18px; --pad:clamp(20px,5vw,40px);
+  }
+  body.t-lg{--fs:20px}
+  body.t-xl{--fs:22px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  body{background:var(--paper);color:var(--body);font-family:'Karla',system-ui,sans-serif;
+       font-size:var(--fs);font-weight:500;line-height:1.65;text-align:center}
+  .wrap{max-width:var(--w-text);margin:0 auto;padding:0 var(--pad)}
+
+  h1,h2,h3{font-family:'Bitter',Georgia,serif;color:var(--ink);font-weight:700}
+  h1{font-size:clamp(32px,8vw,46px);line-height:1.14;letter-spacing:-.02em;margin:var(--s2) 0}
+  h2{font-size:calc(var(--fs)*1.35);line-height:1.28}
+  h3{font-size:calc(var(--fs)*1.05);line-height:1.3}
+  .eyebrow{font-size:calc(var(--fs)*.72);letter-spacing:.16em;text-transform:uppercase;
+           color:var(--mute);font-weight:700}
+  .lede{color:var(--mute);font-size:calc(var(--fs)*1.06);font-weight:600}
+  .plain{font-size:calc(var(--fs)*1.04);line-height:1.6}
+  .hint{color:var(--mute);font-size:calc(var(--fs)*.88);line-height:1.55;font-weight:500}
+  p+p{margin-top:var(--s2)}
+  header{padding:var(--s5) 0 var(--s4)}
+  section{padding:var(--s5) 0;border-top:1px solid var(--line)}
+  .stack>*+*{margin-top:var(--s3)}
+
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .btn{background:var(--teal);color:#fff;padding:15px 32px;border-radius:100px;
+       font-weight:700;font-size:var(--fs);transition:opacity .18s}
+  .btn:hover{opacity:.9}
+  .btn.ghost{background:none;color:var(--teal);border:var(--bd) solid var(--teal)}
+  .btn-quiet{color:var(--mute);font-size:calc(var(--fs)*.85);font-weight:700;
+             text-decoration:underline;text-underline-offset:4px;padding:11px;display:inline-block}
+  .btn-quiet:hover{color:var(--ink)}
+  :focus-visible{outline:2.5px solid var(--teal);outline-offset:3px;border-radius:4px}
+  a{color:var(--teal);font-weight:600}
+
+  .tsize{display:flex;align-items:center;gap:var(--s1);justify-content:center;
+         color:var(--mute);font-size:calc(var(--fs)*.78);font-weight:700}
+  .tsize .set{display:flex;border:var(--bd) solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+  .tsize .set button{padding:6px 14px;background:var(--card);color:var(--body);font-weight:700;line-height:1}
+  .tsize .set button:nth-child(1){font-size:14px}
+  .tsize .set button:nth-child(2){font-size:17px}
+  .tsize .set button:nth-child(3){font-size:20px}
+  .tsize .set button[aria-pressed=true]{background:var(--teal);color:#fff}
+
+  label{display:block;font-weight:700;font-size:var(--fs);margin-bottom:6px;color:var(--ink)}
+  .field{max-width:var(--w-field);margin:0 auto}
+  .money-in{position:relative}
+  .money-in>span{position:absolute;left:15px;top:50%;transform:translateY(-50%);
+                 color:var(--mute);font-size:calc(var(--fs)*1.05);pointer-events:none;font-weight:700}
+  .money-in.pct>span{left:auto;right:15px}
+  input,select{width:100%;background:var(--card);border:var(--bd) solid var(--line);
+    border-radius:var(--r-md);color:var(--ink);font-family:'Karla';font-weight:700;
+    font-size:calc(var(--fs)*1.05);padding:13px;text-align:center;-moz-appearance:textfield}
+  input[type=number]{padding-left:34px}
+  .money-in.pct input{padding-left:13px;padding-right:34px}
+  input[type=text]{padding-left:13px}
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input:focus,select:focus{border-color:var(--teal);outline:none}
+  input::placeholder{color:#8A9AA2;font-weight:600}
+
+  /* fork */
+  .choice{display:grid;gap:var(--s2);max-width:var(--w-card);margin:0 auto}
+  .card{display:block;width:100%;background:var(--card);border:var(--bd) solid var(--line);
+        border-radius:var(--r-lg);padding:var(--s3);text-align:center;transition:.15s}
+  .card:hover{border-color:var(--teal)}
+  .card.rec{border-color:var(--teal);background:var(--teal-lt)}
+  .card .cb{display:inline-block;margin-bottom:var(--s1);background:var(--teal);color:#fff;
+            font-size:calc(var(--fs)*.66);font-weight:700;letter-spacing:.1em;
+            text-transform:uppercase;padding:5px 12px;border-radius:100px}
+  .card .ct{display:block;font-family:'Bitter',Georgia,serif;font-weight:700;
+            font-size:calc(var(--fs)*1.15);color:var(--ink);margin-bottom:6px}
+  .card .cs{display:block;font-size:calc(var(--fs)*.85);color:var(--mute);line-height:1.5;font-weight:500}
+
+  /* the reveal */
+  .reveal{background:var(--coin-lt);border:var(--bd) solid var(--coin);
+          border-radius:var(--r-lg);padding:var(--s4) var(--s3);margin-top:var(--s3)}
+  .reveal .rk{font-size:calc(var(--fs)*.74);letter-spacing:.14em;text-transform:uppercase;
+              color:var(--coin);font-weight:700}
+  .reveal .rv{font-family:'Bitter',Georgia,serif;font-weight:700;
+              font-size:clamp(44px,13vw,66px);line-height:1.05;color:var(--coin);
+              letter-spacing:-.025em;margin:var(--s2) 0 var(--s1);font-variant-numeric:tabular-nums}
+  .reveal .rs{color:var(--body);font-size:calc(var(--fs)*.94);font-weight:600}
+  .subs{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--coin);
+        text-align:left;display:grid;gap:var(--s1)}
+  .sub{display:flex;justify-content:space-between;gap:var(--s2);
+       font-size:calc(var(--fs)*.9);font-weight:600;color:var(--ink)}
+  .sub .amt{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--coin);font-weight:700}
+  .sub .per{display:block;font-size:calc(var(--fs)*.76);color:var(--mute);font-weight:500}
+
+  /* debt rows */
+  .debt{background:var(--card);border:var(--bd) solid var(--line);border-radius:var(--r-lg);
+        padding:var(--s3);margin-top:var(--s2);display:grid;gap:var(--s2)}
+  .debt .drow{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+  .debt .lbl{font-size:calc(var(--fs)*.78);font-weight:700;color:var(--mute);
+             letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;display:block}
+  .debt input{font-size:calc(var(--fs)*.98);padding:11px}
+  .debt input[type=number]{padding-left:30px}
+  .debt .money-in>span{left:12px;font-size:calc(var(--fs)*.95)}
+  .debt .money-in.pct>span{left:auto;right:12px}
+  .debt .money-in.pct input{padding-left:11px;padding-right:30px}
+  .rm{color:var(--hot);font-size:calc(var(--fs)*.8);font-weight:700;
+      text-decoration:underline;text-underline-offset:3px;justify-self:end}
+
+  /* bleed / drag */
+  .score{background:var(--card);border:var(--bd) solid var(--line);border-radius:var(--r-lg);
+         padding:var(--s3);margin-top:var(--s2);text-align:left}
+  .score.worst{border-color:var(--hot);background:var(--hot-lt)}
+  .score .nm{font-family:'Bitter',Georgia,serif;font-weight:700;font-size:calc(var(--fs)*1.05);
+             color:var(--ink);margin-bottom:var(--s2)}
+  .score .tag{float:right;font-family:'Karla';font-size:calc(var(--fs)*.64);font-weight:700;
+              letter-spacing:.09em;text-transform:uppercase;padding:4px 10px;border-radius:100px;
+              background:var(--hot);color:#fff}
+  .metric{margin-top:var(--s2)}
+  .metric .mk{display:flex;justify-content:space-between;font-size:calc(var(--fs)*.84);
+              font-weight:700;color:var(--mute);margin-bottom:5px}
+  .metric .mk b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .track{height:9px;background:#E4DDCF;border-radius:100px;overflow:hidden}
+  .track i{display:block;height:100%;border-radius:100px;transition:width .7s cubic-bezier(.2,.7,.3,1)}
+  .track i.bleed{background:var(--hot)}
+  .track i.drag{background:var(--coin)}
+  .score .exp{margin-top:var(--s2);font-size:calc(var(--fs)*.84);color:var(--mute);
+              font-weight:500;line-height:1.55}
+
+  /* paths */
+  .paths{display:grid;gap:var(--s2);margin-top:var(--s3)}
+  .path{background:var(--card);border:var(--bd) solid var(--line);
+        border-radius:var(--r-lg);padding:var(--s3);text-align:left}
+  .path.best{border-color:var(--teal);background:var(--teal-lt)}
+  .path .pt{font-family:'Bitter',Georgia,serif;font-weight:700;font-size:calc(var(--fs)*1.02);
+            color:var(--ink);margin-bottom:var(--s2)}
+  .path .ord{font-size:calc(var(--fs)*.86);color:var(--mute);font-weight:600;
+             line-height:1.6;margin-bottom:var(--s2)}
+  .path .line{font-size:calc(var(--fs)*.9);line-height:1.7;font-weight:500}
+  .path .line b{color:var(--ink);font-weight:700}
+  .cost{color:var(--hot);font-weight:700}
+  .save{color:var(--teal);font-weight:700}
+  .verdict{background:var(--coin-lt);border:var(--bd) solid var(--coin);border-radius:var(--r-md);
+           padding:var(--s3);margin-top:var(--s2);font-size:calc(var(--fs)*.9);
+           line-height:1.65;font-weight:500}
+
+  .note{background:var(--card);border:var(--bd) dashed var(--coin);border-radius:var(--r-md);
+        padding:var(--s3);margin-top:var(--s3);font-size:calc(var(--fs)*.86);
+        line-height:1.6;font-weight:500;color:var(--body)}
+  .privacy{color:var(--mute);font-size:calc(var(--fs)*.88);line-height:1.55;
+           font-weight:500;max-width:var(--w-card);margin:0 auto}
+  .privacy svg{vertical-align:-3px;margin-right:6px}
+  footer{padding:var(--s4) 0 var(--s5);border-top:1px solid var(--line);
+         color:var(--faint);font-size:calc(var(--fs)*.84);line-height:1.7;font-weight:500}
+  footer a{color:var(--mute);font-weight:700}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{transition-duration:.15s!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="tsize">
+    <span>Text size</span>
+    <div class="set" role="group" aria-label="Text size">
+      <button data-t="" aria-pressed="true">A</button>
+      <button data-t="t-lg" aria-pressed="false">A</button>
+      <button data-t="t-xl" aria-pressed="false">A</button>
+    </div>
+  </div>
+  <p class="eyebrow" style="margin-top:var(--s4)">Step 2 of 5</p>
+  <h1>Drink some water.</h1>
+  <p class="lede">Then let's find the debt that's hurting you most.</p>
+</header>
+
+<section style="border-top:none;padding-top:0">
+  <div class="stack">
+    <p class="plain">Everyone tells you to pay off the highest interest rate first. That's good math, and it's often the wrong place to start.</p>
+    <p class="plain">Some debt is expensive. Some debt is heavy — it takes so much of your month that you never get ahead. <strong>They are rarely the same debt.</strong></p>
+    <p class="plain">We'll show you both, and what each choice costs.</p>
+  </div>
+</section>
+
+<!-- ============ INCOME ============ -->
+<section>
+  <div class="stack">
+    <h2>First, what comes in?</h2>
+    <p class="hint">Take-home pay each month, after tax. We need this to work out how heavy each debt is.</p>
+    <div class="field">
+      <div class="money-in"><span>$</span>
+        <input type="number" id="income" inputmode="numeric" placeholder="0" min="0" step="50">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FORK ============ -->
+<section>
+  <div class="stack">
+    <h2>Now your debts.</h2>
+
+    <div class="choice" id="choice">
+      <button class="card rec" id="cCsv">
+        <span class="cb">Fastest</span>
+        <span class="ct">Drop in a bank file</span>
+        <span class="cs">Download a CSV from your bank or card account. We'll find your recurring charges and pull out anything that looks like a debt payment. The file never leaves your phone.</span>
+      </button>
+      <button class="card" id="cType">
+        <span class="ct">Type them in</span>
+        <span class="cs">Three numbers per debt. Takes a couple of minutes.</span>
+      </button>
+    </div>
+
+    <!-- CSV path -->
+    <div id="csvPane" hidden>
+      <div class="stack">
+        <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+        <button class="btn" id="pickCsv">Choose a CSV file</button>
+        <p class="hint" id="csvMsg">Most banks have an “Export” or “Download transactions” button. Choose CSV.</p>
+
+        <div class="reveal" id="reveal" hidden>
+          <p class="rk">You're paying, every month</p>
+          <p class="rv" id="revAmt">$0</p>
+          <p class="rs" id="revSub"></p>
+          <div class="subs" id="subList"></div>
+        </div>
+
+        <div class="note" id="csvNote" hidden></div>
+        <button class="btn-quiet" id="csvToType">Now add your debts →</button>
+      </div>
+    </div>
+
+    <!-- manual path -->
+    <div id="typePane" hidden>
+      <div class="stack">
+        <p class="hint">Add each card or loan. Balance, interest rate, and the minimum payment — all three are on your statement.</p>
+        <div id="debts"></div>
+        <button class="btn ghost" id="addDebt">+ Add another debt</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCORES ============ -->
+<section id="scoreSec" hidden>
+  <div class="stack">
+    <h2>What each one is doing to you</h2>
+    <p class="hint"><b>Bleed</b> is what it costs — interest, every month, for nothing.
+      <b>Drag</b> is what it takes — how much of your income is locked up before you spend a cent.</p>
+    <div id="scores"></div>
+  </div>
+</section>
+
+<!-- ============ PATHS ============ -->
+<section id="pathSec" hidden>
+  <div class="stack">
+    <h2>Two ways to do this</h2>
+    <div>
+      <label for="extra">How much can you put toward debt each month?</label>
+      <p class="hint" style="margin-bottom:var(--s2)">Everything, including the minimums. If minimums total $400 and you can manage $550, enter 550.</p>
+      <div class="field">
+        <div class="money-in"><span>$</span>
+          <input type="number" id="extra" inputmode="numeric" placeholder="0" min="0" step="25">
+        </div>
+      </div>
+    </div>
+    <div class="paths" id="paths"></div>
+    <div class="verdict" id="verdict" hidden></div>
+  </div>
+</section>
+
+<!-- ============ SAVE ============ -->
+<section>
+  <div class="stack">
+    <p class="privacy">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#465A66" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Nothing you entered left this page. Not the file, not the numbers.
+    </p>
+    <div>
+      <button class="btn" id="save">Save my file</button>
+      <br><button class="btn-quiet" id="loadBtn">Load a saved file</button>
+      <input type="file" id="loadFile" accept=".json" hidden>
+    </div>
+  </div>
+</section>
+
+<footer>
+  This is general education, not financial advice. We don't know your full situation, and we don't
+  recommend specific accounts, lenders, or products. Payoff figures assume rates and payments stay
+  the same, which real life rarely does.<br><br>
+  <a href="index.html">Home</a> · <a href="step-1.html">Step 1</a> ·
+  <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
+</footer>
+</div>
+
+<script>
+const $   = id => document.getElementById(id);
+const usd = n => '$' + Math.round(n).toLocaleString('en-US');
+const usd2= n => '$' + n.toFixed(2);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+document.querySelectorAll('.tsize .set button').forEach(b =>
+  b.addEventListener('click', () => {
+    document.body.classList.remove('t-lg','t-xl');
+    if (b.dataset.t) document.body.classList.add(b.dataset.t);
+    document.querySelectorAll('.tsize .set button').forEach(x => x.setAttribute('aria-pressed', x===b));
+  }));
+
+let ladder = null;        /* the shared schema v4 file, if loaded */
+let debts  = [];          /* [{id,label,balance,apr,minimum}] */
+
+/* ============================================================
+   CSV PARSING — everything below runs in the browser only
+   ============================================================ */
+
+/* RFC4180-ish: handles quoted fields and embedded commas */
+function parseCSV(text){
+  const rows = [];
+  let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i];
+    if (q){
+      if (c === '"'){ if (text[i+1] === '"'){ cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ','){ row.push(cell); cell = ''; }
+    else if (c === '\n'){ row.push(cell); rows.push(row); row = []; cell = ''; }
+    else if (c !== '\r') cell += c;
+  }
+  if (cell || row.length){ row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(c => c.trim()));
+}
+
+/* find the date / description / amount columns without trusting header names */
+function guessColumns(rows){
+  const head = rows[0].map(h => h.toLowerCase().trim());
+  const body = rows.slice(1, 60);
+  const idx = { date:-1, desc:-1, amount:-1, debit:-1, credit:-1 };
+
+  head.forEach((h, i) => {
+    if (idx.date   < 0 && /date|posted|transaction date/.test(h)) idx.date = i;
+    if (idx.desc   < 0 && /desc|payee|merchant|name|memo|detail|particular/.test(h)) idx.desc = i;
+    if (idx.amount < 0 && /^amount$|amount|value/.test(h))  idx.amount = i;
+    if (idx.debit  < 0 && /debit|withdraw|paid out/.test(h)) idx.debit = i;
+    if (idx.credit < 0 && /credit|deposit|paid in/.test(h))  idx.credit = i;
+  });
+
+  /* fall back to shape: longest text column is the description,
+     most-numeric column is the amount, most-parseable is the date */
+  const colScore = (i, test) => body.reduce((n,r) => n + (test(r[i]||'') ? 1 : 0), 0);
+  const isNum  = s => s.trim() !== '' && !isNaN(parseFloat(s.replace(/[$,()]/g,'')));
+  const isDate = s => !isNaN(Date.parse(s.trim()));
+
+  if (idx.date < 0)
+    idx.date = head.map((_,i)=>i).sort((a,b)=>colScore(b,isDate)-colScore(a,isDate))[0] ?? 0;
+  if (idx.amount < 0 && idx.debit < 0)
+    idx.amount = head.map((_,i)=>i)
+      .filter(i => i !== idx.date)
+      .sort((a,b)=>colScore(b,isNum)-colScore(a,isNum))[0] ?? 1;
+  if (idx.desc < 0){
+    const avgLen = i => body.reduce((n,r)=>n+((r[i]||'').length),0)/Math.max(1,body.length);
+    idx.desc = head.map((_,i)=>i)
+      .filter(i => i !== idx.date && i !== idx.amount)
+      .sort((a,b)=>avgLen(b)-avgLen(a))[0] ?? 2;
+  }
+  return idx;
+}
+
+function toAmount(s){
+  if (!s) return 0;
+  const neg = /^\(.*\)$/.test(s.trim());
+  const v = parseFloat(s.replace(/[^0-9.\-]/g,''));
+  if (isNaN(v)) return 0;
+  return neg ? -Math.abs(v) : v;
+}
+
+/* strip the noise banks add so the same merchant groups together */
+const JUNK = new Set(['COM','WWW','HTTP','HTTPS','INC','LLC','LTD','CORP','THE','NET','ORG']);
+function normalize(desc){
+  return desc.toUpperCase()
+    .replace(/[0-9]{4,}/g,' ')                       /* card / ref numbers */
+    .replace(/\b(POS|ACH|DEBIT|CREDIT|PURCHASE|PAYMENT|RECURRING|AUTOPAY|WEB|ID|REF|TRANSACTION|PENDING)\b/g,' ')
+    .replace(/\b\d{1,2}\/\d{1,2}\b/g,' ')            /* inline dates */
+    .replace(/[^A-Z ]/g,' ')
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !JUNK.has(w))       /* drop state codes, .com, suffixes */
+    .slice(0,2)                                      /* first two words identify it */
+    .join(' ')
+    .trim();
+}
+
+function titleCase(s){
+  return s.toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase());
+}
+
+/* a charge is recurring if the same merchant appears 2+ times at a
+   similar amount, roughly a month or a year apart */
+function findRecurring(txns){
+  const groups = {};
+  txns.forEach(t => {
+    if (t.amount >= 0) return;                       /* money out only */
+    const k = normalize(t.desc);
+    if (k.length < 3) return;
+    (groups[k] = groups[k] || []).push(t);
+  });
+
+  const out = [];
+  Object.entries(groups).forEach(([k, list]) => {
+    if (list.length < 2) return;
+    list.sort((a,b) => a.date - b.date);
+
+    const amts = list.map(t => Math.abs(t.amount));
+    const med  = amts.slice().sort((a,b)=>a-b)[Math.floor(amts.length/2)];
+    if (med < 1) return;
+    /* amounts must be consistent — utilities vary, Netflix does not */
+    const steady = amts.filter(a => Math.abs(a - med) / med < 0.20).length;
+    if (steady < 2) return;
+
+    const gaps = [];
+    for (let i = 1; i < list.length; i++)
+      gaps.push((list[i].date - list[i-1].date) / 86400000);
+    if (!gaps.length) return;
+    const gap = gaps.reduce((a,b)=>a+b,0) / gaps.length;
+
+    let period = null;
+    if (gap >= 25 && gap <= 35) period = 'monthly';
+    else if (gap >= 5 && gap <= 9) period = 'weekly';
+    else if (gap >= 12 && gap <= 17) period = 'fortnightly';
+    else if (gap >= 85 && gap <= 95) period = 'quarterly';
+    else if (gap >= 350 && gap <= 380) period = 'yearly';
+    if (!period) return;
+
+    const perMonth = { weekly:4.33, fortnightly:2.17, monthly:1, quarterly:1/3, yearly:1/12 }[period];
+    out.push({ label: titleCase(k), amount: med, period,
+               monthly: med * perMonth, count: list.length });
+  });
+
+  return out.sort((a,b) => b.monthly - a.monthly);
+}
+
+/* ============================================================
+   THE REVEAL
+   ============================================================ */
+$('pickCsv').addEventListener('click', () => $('csvFile').click());
+$('csvFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  $('csvMsg').textContent = 'Reading ' + f.name + '…';
+  const r = new FileReader();
+  r.onload = () => {
+    try { handleCsv(r.result); }
+    catch (err){
+      $('csvMsg').innerHTML = "That file didn't read as a transaction list. " +
+        "Try a different export, or <b>type your debts in</b> below.";
+      showType();
+    }
+  };
+  r.onerror = () => { $('csvMsg').textContent = "Couldn't open that file."; };
+  r.readAsText(f);
+});
+
+function handleCsv(text){
+  const rows = parseCSV(text);
+  if (rows.length < 3) throw new Error('too short');
+  const idx = guessColumns(rows);
+
+  const txns = rows.slice(1).map(r => {
+    const d = Date.parse((r[idx.date] || '').trim());
+    let amt;
+    if (idx.amount >= 0) amt = toAmount(r[idx.amount]);
+    else {
+      const deb = toAmount(r[idx.debit]), cre = toAmount(r[idx.credit]);
+      amt = deb ? -Math.abs(deb) : Math.abs(cre);
+    }
+    return { date: d, desc: (r[idx.desc] || '').trim(), amount: amt };
+  }).filter(t => !isNaN(t.date) && t.desc && t.amount);
+
+  if (txns.length < 5) throw new Error('no usable rows');
+
+  /* some banks export debits as positives — flip if nothing is negative */
+  if (!txns.some(t => t.amount < 0)) txns.forEach(t => t.amount = -t.amount);
+
+  const rec = findRecurring(txns);
+  const total = rec.reduce((s,r) => s + r.monthly, 0);
+
+  const days = (Math.max(...txns.map(t=>t.date)) - Math.min(...txns.map(t=>t.date))) / 86400000;
+
+  $('reveal').hidden = false;
+  $('revAmt').textContent = usd(total) + ' /mo';
+  $('revSub').innerHTML = rec.length
+    ? '<b>' + rec.length + '</b> repeating charges found — that\'s <b>' +
+      usd(total * 12) + '</b> a year.'
+    : 'No repeating charges found in this file.';
+
+  $('subList').innerHTML = rec.slice(0, 14).map(r =>
+    '<div class="sub"><span>' + r.label +
+      '<span class="per">' + r.period + ' · seen ' + r.count + ' times</span></span>' +
+      '<span class="amt">' + usd2(r.monthly) + '</span></div>').join('');
+
+  $('csvNote').hidden = false;
+  $('csvNote').innerHTML =
+    'Read <b>' + txns.length + '</b> transactions spanning <b>' + Math.round(days) +
+    ' days</b>. Longer exports find more — three months is usually enough to spot a monthly charge, ' +
+    'a full year catches the annual ones.<br><br>' +
+    'We can spot what leaves your account, but a statement never says what you <i>owe</i> or at what ' +
+    'rate. Those three numbers have to come from you.';
+  $('csvMsg').textContent = '';
+  window.__recurring = rec;
+}
+
+/* ============================================================
+   DEBT ENTRY
+   ============================================================ */
+let seq = 0;
+function addDebt(d){
+  const id = 'dbt' + (++seq);
+  debts.push(Object.assign({ id, label:'', balance:0, apr:0, minimum:0 }, d || {}));
+  render();
+}
+
+function render(){
+  $('debts').innerHTML = debts.map(d => `
+    <div class="debt" data-id="${d.id}">
+      <div>
+        <span class="lbl">What is it?</span>
+        <input type="text" data-k="label" value="${d.label.replace(/"/g,'&quot;')}"
+               placeholder="Visa, car loan, student loan…">
+      </div>
+      <div class="drow">
+        <div>
+          <span class="lbl">Balance</span>
+          <div class="money-in"><span>$</span>
+            <input type="number" data-k="balance" inputmode="numeric" min="0" step="50"
+                   value="${d.balance || ''}" placeholder="0"></div>
+        </div>
+        <div>
+          <span class="lbl">Rate</span>
+          <div class="money-in pct"><span>%</span>
+            <input type="number" data-k="apr" inputmode="decimal" min="0" max="99" step="0.1"
+                   value="${d.apr || ''}" placeholder="0"></div>
+        </div>
+      </div>
+      <div>
+        <span class="lbl">Minimum payment each month</span>
+        <div class="money-in"><span>$</span>
+          <input type="number" data-k="minimum" inputmode="numeric" min="0" step="5"
+                 value="${d.minimum || ''}" placeholder="0"></div>
+      </div>
+      ${debts.length > 1 ? '<button class="rm" data-rm="'+d.id+'">Remove</button>' : ''}
+    </div>`).join('');
+  compute();
+}
+
+$('debts').addEventListener('input', e => {
+  const box = e.target.closest('.debt'); if (!box) return;
+  const d = debts.find(x => x.id === box.dataset.id); if (!d) return;
+  const k = e.target.dataset.k;
+  d[k] = k === 'label' ? e.target.value : (parseFloat(e.target.value) || 0);
+  compute();
+});
+$('debts').addEventListener('click', e => {
+  const rm = e.target.closest('[data-rm]'); if (!rm) return;
+  debts = debts.filter(d => d.id !== rm.dataset.rm);
+  render();
+});
+$('addDebt').addEventListener('click', () => addDebt());
+$('income').addEventListener('input', compute);
+$('extra').addEventListener('input', compute);
+
+/* ============================================================
+   BLEED / DRAG
+   ============================================================ */
+function live(){ return debts.filter(d => d.balance > 0 && d.apr >= 0 && d.minimum > 0); }
+
+function compute(){
+  const ds = live();
+  const income = parseFloat($('income').value) || 0;
+
+  if (!ds.length){ $('scoreSec').hidden = true; $('pathSec').hidden = true; return; }
+  $('scoreSec').hidden = false;
+
+  ds.forEach(d => {
+    d.bleed = d.balance * (d.apr/100) / 12;          /* interest per month */
+    d.drag  = income ? d.minimum / income : 0;        /* share of income locked up */
+  });
+
+  const maxBleed = Math.max(...ds.map(d => d.bleed), 0.01);
+  const maxDrag  = Math.max(...ds.map(d => d.drag), 0.01);
+  const worstBleed = ds.slice().sort((a,b)=>b.bleed-a.bleed)[0];
+  const worstDrag  = ds.slice().sort((a,b)=>b.drag -a.drag )[0];
+
+  $('scores').innerHTML = ds.slice().sort((a,b)=>b.bleed-a.bleed).map(d => {
+    const isB = d === worstBleed, isD = d === worstDrag;
+    const tag = isB && isD ? 'Worst on both' : isB ? 'Bleeds most' : isD ? 'Drags most' : '';
+    return `
+    <div class="score ${isB||isD ? 'worst':''}">
+      <p class="nm">${tag ? '<span class="tag">'+tag+'</span>' : ''}${d.label || 'Untitled debt'}</p>
+      <div class="metric">
+        <div class="mk"><span>Bleed — interest each month</span><b>${usd2(d.bleed)}</b></div>
+        <div class="track"><i class="bleed" style="width:${(d.bleed/maxBleed)*100}%"></i></div>
+      </div>
+      <div class="metric">
+        <div class="mk"><span>Drag — share of your income</span><b>${income ? (d.drag*100).toFixed(1)+'%' : '—'}</b></div>
+        <div class="track"><i class="drag" style="width:${(d.drag/maxDrag)*100}%"></i></div>
+      </div>
+      <p class="exp">${explain(d, income)}</p>
+    </div>`;
+  }).join('');
+
+  paths(ds, income);
+}
+
+function explain(d, income){
+  const yr = d.bleed * 12;
+  let s = `At ${d.apr}% on ${usd(d.balance)}, this costs <b>${usd2(d.bleed)}</b> a month in interest — <b>${usd(yr)}</b> a year for nothing.`;
+  if (income) s += ` The minimum takes <b>${(d.drag*100).toFixed(1)}%</b> of what you bring home.`;
+  return s;
+}
+
+/* ============================================================
+   TWO PATHS
+   ============================================================ */
+function payoffOrder(list, budget, order){
+  const q = list.map(d => ({...d, bal:d.balance}));
+  q.sort(order);
+  let month = 0, interest = 0;
+  const cleared = [];
+  const minTotal = q.reduce((s,d)=>s+d.minimum,0);
+  if (budget < minTotal) return null;
+
+  while (q.some(d => d.bal > 0) && month < 600){
+    month++;
+    let spare = budget;
+    q.forEach(d => {
+      if (d.bal <= 0) return;
+      const int = d.bal * (d.apr/100)/12;
+      d.bal += int; interest += int;
+      const pay = Math.min(d.minimum, d.bal);
+      d.bal -= pay; spare -= pay;
+    });
+    for (const d of q){
+      if (d.bal <= 0 || spare <= 0) continue;
+      const pay = Math.min(spare, d.bal);
+      d.bal -= pay; spare -= pay;
+    }
+    q.forEach(d => {
+      if (d.bal <= 0.01 && !cleared.find(c => c.id === d.id)){
+        d.bal = 0; cleared.push({ id:d.id, label:d.label, month });
+      }
+    });
+  }
+  return { months: month, interest, cleared, order: q.map(d => d.label || 'Untitled') };
+}
+
+function paths(ds, income){
+  $('pathSec').hidden = false;
+  const budget = parseFloat($('extra').value) || 0;
+  const minTotal = ds.reduce((s,d)=>s+d.minimum,0);
+
+  if (!budget){
+    $('paths').innerHTML = '<p class="hint">Enter what you can put toward debt and we\'ll run both routes.</p>';
+    $('verdict').hidden = true;
+    return;
+  }
+  if (budget < minTotal){
+    $('paths').innerHTML = '<p class="hint">That\'s less than your minimums, which total <b>' +
+      usd(minTotal) + '</b>. Enter at least that so the comparison means something.</p>';
+    $('verdict').hidden = true;
+    return;
+  }
+
+  /* A — stop the bleeding: highest rate first */
+  const A = payoffOrder(ds, budget, (a,b) => b.apr - a.apr);
+  /* B — lighten the month: smallest balance first, so payments free up soonest */
+  const B = payoffOrder(ds, budget, (a,b) => a.balance - b.balance);
+  if (!A || !B){ $('paths').innerHTML = ''; return; }
+
+  const diff = B.interest - A.interest;
+  const firstA = A.cleared[0], firstB = B.cleared[0];
+
+  $('paths').innerHTML = `
+    <div class="path ${diff >= 0 ? 'best':''}">
+      <p class="pt">Stop the bleeding first</p>
+      <p class="ord">Order: ${A.order.join(' → ')}</p>
+      <p class="line">
+        Debt-free in <b>${A.months} months</b>.<br>
+        Total interest: <span class="cost">${usd(A.interest)}</span><br>
+        ${firstA ? 'First one gone: <b>' + firstA.label + '</b>, month ' + firstA.month : ''}
+      </p>
+    </div>
+    <div class="path ${diff < 0 ? 'best':''}">
+      <p class="pt">Lighten the month first</p>
+      <p class="ord">Order: ${B.order.join(' → ')}</p>
+      <p class="line">
+        Debt-free in <b>${B.months} months</b>.<br>
+        Total interest: <span class="cost">${usd(B.interest)}</span><br>
+        ${firstB ? 'First one gone: <b>' + firstB.label + '</b>, month ' + firstB.month : ''}
+      </p>
+    </div>`;
+
+  const freed = firstB ? ds.find(d => d.id === firstB.id) : null;
+  $('verdict').hidden = false;
+  $('verdict').innerHTML = Math.abs(diff) < 1
+    ? 'Both routes cost you about the same here. Pick whichever you\'ll actually stick to.'
+    : `Stopping the bleeding first saves <span class="save">${usd(Math.abs(diff))}</span>` +
+      (A.months !== B.months ? ` and finishes ${Math.abs(A.months-B.months)} month${Math.abs(A.months-B.months)===1?'':'s'} ${A.months < B.months ? 'sooner' : 'later'}` : '') +
+      `.<br><br>The other route clears <b>${firstB ? firstB.label : 'a debt'}</b> in month ${firstB ? firstB.month : '—'}` +
+      (freed ? `, freeing up <b>${usd(freed.minimum)}</b> a month and one less bill to think about` : '') +
+      `. Some people need that to keep going.<br><br>` +
+      `<b>${usd(Math.abs(diff))}</b> is what that comfort costs. Now it's a choice, not a mistake.`;
+}
+
+/* ============================================================
+   PANES
+   ============================================================ */
+function showCsv(){ $('choice').hidden = true; $('csvPane').hidden = false; }
+function showType(){
+  $('choice').hidden = true; $('csvPane').hidden = true; $('typePane').hidden = false;
+  if (!debts.length) addDebt();
+  setTimeout(() => $('typePane').scrollIntoView({behavior: reduced?'auto':'smooth', block:'start'}), 60);
+}
+$('cCsv').addEventListener('click', showCsv);
+$('cType').addEventListener('click', showType);
+$('csvToType').addEventListener('click', showType);
+
+/* ============================================================
+   SAVE / LOAD — schema v4, shared with Step 1 and the goal engine
+   ============================================================ */
+$('save').addEventListener('click', () => {
+  const out = Object.assign({}, ladder || {}, {
+    v: 4, saved_at: new Date().toISOString(),
+    monthly_income: parseFloat($('income').value) || 0,
+    debt_budget: parseFloat($('extra').value) || 0,
+    debts: debts.filter(d => d.balance > 0).map(d => ({
+      id: d.id, kind: 'entered', label: d.label || 'Untitled',
+      balance: d.balance, apr: d.apr, minimum: d.minimum, from_step: 2
+    })),
+    recurring: (window.__recurring || []).map(r => ({
+      label: r.label, amount: r.amount, period: r.period, monthly: +r.monthly.toFixed(2)
+    }))
+  });
+  const url = URL.createObjectURL(new Blob([JSON.stringify(out,null,2)],{type:'application/json'}));
+  Object.assign(document.createElement('a'), {href:url, download:'my-ladder.json'}).click();
+  URL.revokeObjectURL(url);
+});
+
+$('loadBtn').addEventListener('click', () => $('loadFile').click());
+$('loadFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{
+      ladder = JSON.parse(r.result);
+      if (ladder.monthly_income) $('income').value = ladder.monthly_income;
+      if (ladder.debt_budget)    $('extra').value  = ladder.debt_budget;
+      debts = [];
+      (ladder.debts || []).forEach(d => addDebt({
+        label: d.label || '', balance: d.balance || 0,
+        apr: d.apr || 0, minimum: d.minimum || 0
+      }));
+      if (!debts.length) addDebt();
+      showType();
+      compute();
+    } catch { alert("That file didn't open. Pick the my-ladder.json file you saved."); }
+  };
+  r.readAsText(f);
+});
+</script>
+</body>
+</html>

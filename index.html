@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Being ready costs more than it used to</title>
+<meta name="description" content="Find out how much cash it takes to be ready for the unplanned — sized to your actual bills and today's prices. Free, and your numbers never leave your phone.">
+<meta property="og:title" content="Being ready costs more than it used to.">
+<meta property="og:description" content="Same flat tire. Same dentist. Different price. Find your number in two minutes.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Karla:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F4ED; --card:#FFFFFF; --line:#C9C2B4;
+    --ink:#141D22; --body:#22303A; --mute:#465A66; --faint:#5B6E78;
+    --teal:#15665A; --teal-lt:#E2EFEB;
+    --coin:#9A5411; --coin-lt:#F7EDE1;
+    --s1:8px; --s2:14px; --s3:22px; --s4:34px; --s5:52px; --s6:76px;
+    --r-sm:10px; --r-md:14px; --r-lg:18px;
+    --w-text:560px; --w-card:440px; --w-field:320px;
+    --bd:2px; --fs:18px; --pad:clamp(20px,5vw,40px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  body{background:var(--paper);color:var(--body);
+       font-family:'Karla',system-ui,sans-serif;font-size:var(--fs);
+       font-weight:500;line-height:1.65;text-align:center}
+  .wrap{max-width:var(--w-text);margin:0 auto;padding:0 var(--pad)}
+
+  h1,h2,h3{font-family:'Bitter',Georgia,serif;color:var(--ink);font-weight:700}
+  h1{font-size:clamp(32px,8vw,46px);line-height:1.14;letter-spacing:-.02em}
+  h2{font-size:clamp(24px,5.5vw,30px);line-height:1.25;letter-spacing:-.01em}
+  h3{font-size:calc(var(--fs)*1.1);line-height:1.3}
+  .lede{color:var(--mute);font-size:calc(var(--fs)*1.06);font-weight:600}
+  .plain{font-size:calc(var(--fs)*1.02);line-height:1.62}
+  p+p{margin-top:var(--s2)}
+  section{padding:var(--s6) 0;border-top:1px solid var(--line)}
+
+  a{color:var(--teal)}
+  .btn{display:inline-block;background:var(--teal);color:#fff;padding:17px 38px;
+       border-radius:100px;font-weight:700;font-size:var(--fs);text-decoration:none;
+       transition:opacity .18s}
+  .btn:hover{opacity:.9}
+  .btn-sub{display:block;margin-top:var(--s2);color:var(--mute);
+           font-size:calc(var(--fs)*.82);font-weight:600}
+  :focus-visible{outline:2.5px solid var(--teal);outline-offset:3px;border-radius:4px}
+
+  /* ---------- hero ---------- */
+  header{padding:var(--s6) 0 var(--s5)}
+  .kicker{font-size:calc(var(--fs)*.74);letter-spacing:.16em;text-transform:uppercase;
+          color:var(--teal);font-weight:700;margin-bottom:var(--s3)}
+
+  .demo{background:var(--card);border:var(--bd) solid var(--line);
+        border-radius:var(--r-lg);padding:var(--s4) var(--s3);
+        max-width:var(--w-card);margin:var(--s4) auto 0}
+  .yr{font-family:'Bitter',Georgia,serif;font-weight:700;
+      font-size:calc(var(--fs)*1.5);color:var(--teal);line-height:1;
+      font-variant-numeric:tabular-nums}
+  .amt{font-family:'Bitter',Georgia,serif;font-weight:700;
+       font-size:clamp(46px,13vw,68px);line-height:1.05;color:var(--coin);
+       letter-spacing:-.025em;margin:var(--s2) 0 var(--s1);
+       font-variant-numeric:tabular-nums}
+  .amt-cap{color:var(--mute);font-size:calc(var(--fs)*.86);font-weight:600;line-height:1.5}
+
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;
+    background:transparent;margin:var(--s4) 0 var(--s1);cursor:grab}
+  input[type=range]:active{cursor:grabbing}
+  input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:100px;
+    background:linear-gradient(90deg,var(--teal) var(--pos,0%),#DDD6C8 var(--pos,0%))}
+  input[type=range]::-moz-range-track{height:8px;border-radius:100px;background:#DDD6C8}
+  input[type=range]::-moz-range-progress{height:8px;border-radius:100px;background:var(--teal)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:32px;height:32px;border-radius:50%;background:var(--teal);
+    border:3px solid var(--card);box-shadow:0 1px 4px rgba(20,29,34,.28);margin-top:-12px}
+  input[type=range]::-moz-range-thumb{width:32px;height:32px;border-radius:50%;
+    background:var(--teal);border:3px solid var(--card);box-shadow:0 1px 4px rgba(20,29,34,.28)}
+  .ends{display:flex;justify-content:space-between;color:var(--faint);
+        font-size:calc(var(--fs)*.76);font-weight:700;letter-spacing:.05em}
+
+  /* ---------- trust ---------- */
+  .trust{background:var(--teal-lt);border:var(--bd) solid var(--teal);
+         border-radius:var(--r-lg);padding:var(--s4) var(--s3);
+         max-width:var(--w-card);margin:var(--s4) auto 0;text-align:left}
+  .trust dt{font-size:calc(var(--fs)*.74);letter-spacing:.12em;text-transform:uppercase;
+            color:var(--teal);font-weight:700;margin-bottom:5px}
+  .trust dd{color:var(--ink);font-weight:600;font-size:calc(var(--fs)*.94);line-height:1.5}
+  .trust dd+dt{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid #B9D3CC}
+
+  /* ---------- ladder ---------- */
+  .rungs{display:grid;gap:var(--s2);max-width:var(--w-card);margin:var(--s4) auto 0}
+  .rung{background:var(--card);border:var(--bd) solid var(--line);border-radius:var(--r-md);
+        padding:var(--s3);text-align:left;display:grid;
+        grid-template-columns:34px 1fr;gap:var(--s2);align-items:start}
+  .rung.now{border-color:var(--teal);background:var(--teal-lt)}
+  .rung .n{width:34px;height:34px;border-radius:50%;background:var(--line);color:var(--card);
+           font-weight:700;font-size:calc(var(--fs)*.86);display:grid;place-items:center}
+  .rung.now .n{background:var(--teal)}
+  .rung .calm{display:block;font-family:'Bitter',Georgia,serif;font-weight:700;
+              color:var(--ink);font-size:calc(var(--fs)*1.02);line-height:1.3}
+  .rung .money{display:block;color:var(--mute);font-size:calc(var(--fs)*.88);
+               font-weight:500;line-height:1.5;margin-top:4px}
+  .rung .tag{display:inline-block;margin-top:var(--s1);background:var(--teal);color:#fff;
+             font-size:calc(var(--fs)*.64);font-weight:700;letter-spacing:.09em;
+             text-transform:uppercase;padding:4px 10px;border-radius:100px}
+
+  /* ---------- three points ---------- */
+  .pts{display:grid;gap:var(--s3);max-width:var(--w-card);margin:var(--s4) auto 0}
+  .pt{background:var(--card);border:var(--bd) solid var(--line);
+      border-radius:var(--r-md);padding:var(--s3)}
+  .pt h3{margin-bottom:var(--s1)}
+  .pt p{color:var(--mute);font-size:calc(var(--fs)*.9);line-height:1.6;font-weight:500}
+  .pt .eg{display:block;margin-top:var(--s2);padding-top:var(--s2);
+          border-top:1px solid var(--line);color:var(--coin);
+          font-weight:700;font-size:calc(var(--fs)*.86)}
+
+  footer{padding:var(--s5) 0 var(--s6);border-top:1px solid var(--line);
+         color:var(--faint);font-size:calc(var(--fs)*.84);line-height:1.7;font-weight:500}
+  footer a{color:var(--mute)}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition-duration:.1s!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= HERO ================= -->
+  <header>
+    <p class="kicker">Free · Nothing to install</p>
+    <h1>Being ready costs more than it used to.</h1>
+    <p class="lede" style="margin-top:var(--s3)">A flat tire. A dentist visit. A week you didn't plan for.<br>Drag the year and watch the price.</p>
+
+    <div class="demo">
+      <span class="yr" id="yr">1992</span>
+      <p class="amt" id="amt">$1,000</p>
+      <p class="amt-cap" id="cap">What it took to cover it.</p>
+
+      <input type="range" id="slide" min="1992" max="2026" value="1992" step="1"
+             aria-label="Drag to change the year">
+      <div class="ends"><span>1992</span><span>TODAY</span></div>
+    </div>
+
+    <p class="plain" style="margin-top:var(--s4);color:var(--mute)">
+      Nothing about the flat tire changed.<br>Only what it costs to be ready for it.
+    </p>
+
+    <p style="margin-top:var(--s4)">
+      <a class="btn" href="step-1.html">Find your number</a>
+      <span class="btn-sub">Two minutes. No signup. No card.</span>
+    </p>
+  </header>
+
+  <!-- ================= TRUST ================= -->
+  <section>
+    <h2>Your numbers never leave your phone.</h2>
+    <p class="plain" style="margin-top:var(--s3);color:var(--mute)">
+      We're asking about your rent and your debt. So here is exactly what happens to it.
+    </p>
+
+    <dl class="trust">
+      <dt>Stays on your device</dt>
+      <dd>Every number you type. Your rent, your debts, your bills, your savings. The math runs in your browser, not on our computers.</dd>
+      <dt>Reaches our servers</dt>
+      <dd>Nothing — unless you ask for a monthly reminder. Then we store your email address and which step you're on. That's the whole list.</dd>
+      <dt>We never do</dt>
+      <dd>Connect to your bank. Sell your data. Show you ads. Charge you for something you didn't agree to.</dd>
+    </dl>
+  </section>
+
+  <!-- ================= LADDER ================= -->
+  <section>
+    <h2>Five steps. One at a time.</h2>
+    <p class="plain" style="margin-top:var(--s3);color:var(--mute)">
+      Each one pairs something calm with something practical. The calm part is free and takes ten seconds. Start there when the money part feels like too much.
+    </p>
+
+    <div class="rungs">
+      <div class="rung now">
+        <span class="n">1</span>
+        <span>
+          <span class="calm">Take a breath.</span>
+          <span class="money">Put aside a small pile of cash, sized to your actual bills and today's prices.</span>
+          <span class="tag">Ready now</span>
+        </span>
+      </div>
+      <div class="rung">
+        <span class="n">2</span>
+        <span>
+          <span class="calm">Drink some water.</span>
+          <span class="money">Find the debt hurting you most — not the biggest one, the one taking the most from your month.</span>
+        </span>
+      </div>
+      <div class="rung">
+        <span class="n">3</span>
+        <span>
+          <span class="calm">Stand up and stretch.</span>
+          <span class="money">Build the real cushion. Step 1 was for a flat tire. This one is for losing your job.</span>
+        </span>
+      </div>
+      <div class="rung">
+        <span class="n">4</span>
+        <span>
+          <span class="calm">Find one good thing today.</span>
+          <span class="money">Check whether your money is working or leaking. What savings earns, against what debt costs.</span>
+        </span>
+      </div>
+      <div class="rung">
+        <span class="n">5</span>
+        <span>
+          <span class="calm">Do something that's yours.</span>
+          <span class="money">You're safe now. This is where money starts making money.</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHY DIFFERENT ================= -->
+  <section>
+    <h2>Three things nobody else does.</h2>
+    <div class="pts">
+      <div class="pt">
+        <h3>Your target moves with prices</h3>
+        <p>Most savings advice hands you a number that was set years ago and never touched again. Ours checks the official price index every month and updates what you're aiming for.</p>
+        <span class="eg">Come back next year. The number will be different, and we'll tell you why.</span>
+      </div>
+      <div class="pt">
+        <h3>We count the once-a-year costs</h3>
+        <p>Car registration. New tires. Christmas. Oil changes. They're real money, they just don't show up monthly — so most budgets pretend they don't exist.</p>
+        <span class="eg">$900 at Christmas is $75 a month you weren't counting.</span>
+      </div>
+      <div class="pt">
+        <h3>Free means free</h3>
+        <p>No trial that turns into a charge. No card to get started. The core is free permanently — and if we ever add a paid piece, it'll be for something that genuinely costs us money to run.</p>
+        <span class="eg">We'll email you before we charge you. Always.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section>
+    <h2>What's your number?</h2>
+    <p class="plain" style="margin-top:var(--s3);color:var(--mute)">
+      Two minutes, and you'll know how much cash it takes to be ready.
+    </p>
+    <p style="margin-top:var(--s4)">
+      <a class="btn" href="step-1.html">Start step 1</a>
+      <span class="btn-sub">Nothing to install. Nothing to sign up for.</span>
+    </p>
+  </section>
+
+  <footer>
+    This is general education, not financial advice. We don't know your situation, and we don't
+    recommend specific accounts, lenders, or products.<br><br>
+    Figures are indexed to the Consumer Price Index for All Urban Consumers (CPI-U), published by
+    the U.S. Bureau of Labor Statistics.<br><br>
+    <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
+  </footer>
+</div>
+
+<script>
+/* CPI-U annual averages. Wire the last entries to FRED series CPIAUCSL
+   (free API) on the same monthly cron as the rest of the site.
+   1992 is the base year — when the $1,000 starter figure entered circulation. */
+const CPI = {
+  1992:140.3, 1993:144.5, 1994:148.2, 1995:152.4, 1996:156.9, 1997:160.5,
+  1998:163.0, 1999:166.6, 2000:172.2, 2001:177.1, 2002:179.9, 2003:184.0,
+  2004:188.9, 2005:195.3, 2006:201.6, 2007:207.3, 2008:215.3, 2009:214.5,
+  2010:218.1, 2011:224.9, 2012:229.6, 2013:233.0, 2014:236.7, 2015:237.0,
+  2016:240.0, 2017:245.1, 2018:251.1, 2019:255.7, 2020:258.8, 2021:271.0,
+  2022:292.7, 2023:304.7, 2024:313.7, 2025:322.0, 2026:330.0   /* last two: estimates until wired */
+};
+const BASE = CPI[1992];
+
+/* one line per era — concrete, no background knowledge needed */
+const CAPTIONS = {
+  1992:'What it took to cover it.',
+  1996:'Creeping up, slowly enough that nobody noticed.',
+  2000:'A fifth more than it took eight years earlier.',
+  2005:'Now $400 more — same flat tire.',
+  2009:'Prices dipped for a year. Then kept climbing.',
+  2013:'Two thirds more than it took in 1992.',
+  2017:'The increase alone now covers a car repair.',
+  2021:'Prices jumped fast. Most savings advice never moved.',
+  2024:'More than double what it took in 1992.',
+  2026:'What it takes to be ready today.'
+};
+function captionFor(y){
+  let best = 1992;
+  for (const k in CAPTIONS) if (+k <= y) best = +k;
+  return CAPTIONS[best];
+}
+
+const slide = document.getElementById('slide');
+const yrEl  = document.getElementById('yr');
+const amtEl = document.getElementById('amt');
+const capEl = document.getElementById('cap');
+
+function paint(){
+  const y = +slide.value;
+  const v = Math.round(1000 * (CPI[y] / BASE) / 10) * 10;
+  yrEl.textContent  = y;
+  amtEl.textContent = '$' + v.toLocaleString('en-US');
+  capEl.textContent = captionFor(y);
+  const pct = ((y - +slide.min) / (+slide.max - +slide.min)) * 100;
+  slide.style.setProperty('--pos', pct + '%');
+}
+slide.addEventListener('input', paint);
+paint();
+
+/* the last two years are estimates until this resolves */
+fetch('/api/indexes')
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(d => {
+    if (!d.cpi || !d.cpi.value) return;
+    const y = new Date(d.cpi.as_of + 'T00:00:00').getFullYear();
+    if (CPI[y]) CPI[y] = d.cpi.value;
+    if (y > +slide.max){ slide.max = y; CPI[y] = d.cpi.value; }
+    paint();
+  })
+  .catch(() => {});
+
+/* nudge it once on load so the control reads as draggable */
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  let t = 0;
+  const tease = setInterval(() => {
+    t += 1;
+    slide.value = 1992 + Math.round(t * 1.6);
+    paint();
+    if (+slide.value >= 2000){ clearInterval(tease); }
+  }, 45);
+}
+</script>
+</body>
+</html>

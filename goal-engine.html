@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Your goal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Karla:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F4ED; --card:#FFFFFF; --line:#C9C2B4;
+    --ink:#141D22; --body:#22303A; --mute:#465A66; --faint:#5B6E78;
+    --breath:#15665A; --breath-lt:#E2EFEB;
+    --coin:#9A5411; --coin-lt:#F7EDE1;
+    --warn:#8A3D14;
+    --fs:18px; --pad:clamp(20px,5vw,40px);
+  }
+  body.t-lg{--fs:20px}
+  body.t-xl{--fs:22px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  body{background:var(--paper);color:var(--body);font-family:'Karla',system-ui,sans-serif;
+       font-size:var(--fs);font-weight:500;line-height:1.65;text-align:center}
+  .wrap{max-width:540px;margin:0 auto;padding:0 var(--pad)}
+
+  .eyebrow{font-size:calc(var(--fs)*.72);letter-spacing:.16em;text-transform:uppercase;
+           color:var(--mute);font-weight:700}
+  h1,h2{font-family:'Bitter',Georgia,serif;color:var(--ink)}
+  h1{font-weight:700;font-size:clamp(34px,8.5vw,48px);line-height:1.12;
+     letter-spacing:-.015em;margin:14px 0 12px}
+  h2{font-weight:700;font-size:calc(var(--fs)*1.35);line-height:1.28;margin-bottom:6px}
+  .lede{color:var(--mute);font-size:calc(var(--fs)*1.06);font-weight:600}
+  p+p{margin-top:14px}
+  section{padding:44px 0;border-top:1px solid var(--line)}
+
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .btn{background:var(--breath);color:#fff;padding:15px 32px;border-radius:100px;
+       font-weight:700;font-size:var(--fs)}
+  .btn:hover{opacity:.9}
+  .btn-quiet{color:var(--mute);font-size:calc(var(--fs)*.85);font-weight:700;
+             text-decoration:underline;text-underline-offset:4px;padding:11px}
+  .btn-quiet:hover{color:var(--ink)}
+  :focus-visible{outline:2.5px solid var(--breath);outline-offset:3px;border-radius:4px}
+
+  .tsize{display:flex;align-items:center;gap:10px;justify-content:center;padding:18px 0 0;
+         color:var(--mute);font-size:calc(var(--fs)*.78);font-weight:700}
+  .tsize .set{display:flex;border:2px solid var(--line);border-radius:9px;overflow:hidden}
+  .tsize .set button{padding:6px 14px;background:var(--card);color:var(--body);font-weight:700}
+  .tsize .set button:nth-child(1){font-size:14px}
+  .tsize .set button:nth-child(2){font-size:17px}
+  .tsize .set button:nth-child(3){font-size:20px}
+  .tsize .set button[aria-pressed=true]{background:var(--breath);color:#fff}
+
+  /* template picker */
+  .tpl{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:400px;margin:22px auto 0}
+  .tpl button{background:var(--card);border:2px solid var(--line);border-radius:14px;
+              padding:18px 12px;font-weight:700;color:var(--body);transition:.15s}
+  .tpl button:hover{border-color:var(--breath)}
+  .tpl button[aria-pressed=true]{background:var(--breath);border-color:var(--breath);color:#fff}
+  .tpl .ic{display:block;font-size:calc(var(--fs)*1.5);margin-bottom:5px;line-height:1}
+
+  label{display:block;font-weight:700;font-size:var(--fs);margin-bottom:6px;color:var(--ink)}
+  .hint{color:var(--mute);font-size:calc(var(--fs)*.88);margin-bottom:14px;line-height:1.55;font-weight:500}
+  .field{max-width:300px;margin:0 auto}
+  .money-in{position:relative}
+  .money-in>span{position:absolute;left:15px;top:50%;transform:translateY(-50%);
+                 color:var(--mute);font-size:calc(var(--fs)*1.05);pointer-events:none;font-weight:700}
+  input{width:100%;background:var(--card);border:2px solid var(--line);border-radius:12px;
+    color:var(--ink);font-family:'Karla';font-weight:700;font-size:calc(var(--fs)*1.1);
+    padding:13px 13px 13px 34px;text-align:center;-moz-appearance:textfield}
+  input[type=text]{padding-left:13px}
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input:focus{border-color:var(--breath);outline:none}
+  input::placeholder{color:#8A9AA2;font-weight:600}
+
+  .seg{display:flex;border:2px solid var(--line);border-radius:10px;overflow:hidden;
+       margin:10px auto 0;max-width:340px}
+  .seg button{flex:1;padding:11px 6px;background:var(--card);color:var(--body);
+              font-size:calc(var(--fs)*.8);font-weight:700;line-height:1.3}
+  .seg button:hover{background:var(--breath-lt)}
+  .seg button[aria-pressed=true]{background:var(--breath);color:#fff}
+
+  .rows{display:grid;gap:20px;margin-top:20px;text-align:center}
+  .row .lab label{font-size:calc(var(--fs)*.96);margin-bottom:3px}
+  .row .sub{display:block;font-size:calc(var(--fs)*.79);color:var(--faint);
+            line-height:1.45;margin-bottom:8px;font-weight:500}
+  .row .field{max-width:230px}
+  .row input{font-size:calc(var(--fs)*1);padding:11px 11px 11px 30px}
+  .row .money-in>span{left:12px}
+
+  .total{background:var(--breath-lt);border:2px solid var(--breath);border-radius:14px;
+         padding:16px;margin-top:26px}
+  .total .k{display:block;font-size:calc(var(--fs)*.78);color:var(--breath);font-weight:700;
+            letter-spacing:.08em;text-transform:uppercase}
+  .total .v{font-family:'Bitter',Georgia,serif;font-weight:700;font-size:calc(var(--fs)*1.7);
+            color:var(--ink);font-variant-numeric:tabular-nums}
+
+  .result{background:var(--card);border:2px solid var(--line);border-radius:18px;
+          padding:30px 22px;margin-top:26px}
+  .result .eyebrow{color:var(--coin)}
+  .figure{font-family:'Bitter',Georgia,serif;font-weight:700;font-size:clamp(42px,12vw,62px);
+    line-height:1.05;color:var(--coin);letter-spacing:-.02em;margin:10px 0 6px;
+    font-variant-numeric:tabular-nums}
+  .sub2{color:var(--mute);font-size:calc(var(--fs)*.9);font-weight:600}
+  .bar{height:10px;background:#DDD6C8;border-radius:99px;overflow:hidden;margin:20px auto 10px;max-width:340px}
+  .bar i{display:block;height:100%;background:var(--coin);width:0;border-radius:99px;
+         transition:width .8s cubic-bezier(.2,.7,.3,1)}
+  .gap{font-size:calc(var(--fs)*.94);color:var(--mute);font-weight:500}
+  .gap b{color:var(--ink);font-weight:700}
+
+  .drift{background:var(--coin-lt);border:2px solid var(--coin);border-radius:14px;
+         padding:20px 18px;margin-top:22px;text-align:center}
+  .drift .t{font-family:'Bitter',Georgia,serif;font-weight:700;font-size:calc(var(--fs)*1.05);
+            color:var(--ink);margin-bottom:9px}
+  .drift p{font-size:calc(var(--fs)*.9);color:var(--body);line-height:1.6;font-weight:500}
+  .drift b{color:var(--warn);font-weight:700}
+
+  /* tradeoff */
+  .paths{display:grid;gap:14px;margin-top:20px}
+  .path{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:20px 18px}
+  .path.best{border-color:var(--breath);background:var(--breath-lt)}
+  .path .pt{font-family:'Bitter',Georgia,serif;font-weight:700;font-size:calc(var(--fs)*1.05);
+             color:var(--ink);margin-bottom:10px}
+  .path .line{font-size:calc(var(--fs)*.9);color:var(--body);font-weight:500;line-height:1.7}
+  .path .line b{color:var(--ink);font-weight:700}
+  .path .cost{color:var(--warn);font-weight:700}
+  .path .save{color:var(--breath);font-weight:700}
+  .choose{margin-top:16px;font-size:calc(var(--fs)*.88);color:var(--mute);font-weight:500;line-height:1.6}
+
+  .flag{background:var(--card);border:2px dashed var(--coin);border-radius:14px;
+        padding:16px 18px;margin-top:22px;font-size:calc(var(--fs)*.88);
+        color:var(--body);font-weight:500;line-height:1.6}
+
+  footer{padding:38px 0 60px;border-top:1px solid var(--line);color:var(--faint);
+         font-size:calc(var(--fs)*.84);line-height:1.7;font-weight:500}
+  .src{color:var(--faint);font-size:calc(var(--fs)*.78);margin-top:10px;font-weight:500}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{transition-duration:.15s!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="tsize">
+    <span>Text size</span>
+    <div class="set" role="group" aria-label="Text size">
+      <button data-t="" aria-pressed="true">A</button>
+      <button data-t="t-lg" aria-pressed="false">A</button>
+      <button data-t="t-xl" aria-pressed="false">A</button>
+    </div>
+  </div>
+
+  <section style="border-top:none;padding-top:30px">
+    <p class="eyebrow">Your goal</p>
+    <h1>Saving for something big.</h1>
+    <p class="lede">Big things have a price that moves. We'll keep your number honest.</p>
+
+    <div class="tpl" id="tpl" role="group" aria-label="What are you saving for?">
+      <button data-k="house" aria-pressed="true"><span class="ic">🏠</span>A home</button>
+      <button data-k="car"   aria-pressed="false"><span class="ic">🚗</span>A car</button>
+      <button data-k="wed"   aria-pressed="false"><span class="ic">💍</span>A wedding</button>
+      <button data-k="other" aria-pressed="false"><span class="ic">✦</span>Something else</button>
+    </div>
+    <div id="nameWrap" hidden style="margin-top:20px">
+      <div class="field"><input type="text" id="goalName" placeholder="Name your goal" maxlength="40"></div>
+    </div>
+  </section>
+
+  <!-- ============ TARGET ============ -->
+  <section>
+    <h2 id="tHead">What does the home cost?</h2>
+    <p class="hint" id="tHint">The asking price of the kind of place you want. A rough number is fine.</p>
+    <div class="field">
+      <div class="money-in"><span>$</span>
+        <input type="number" id="price" inputmode="numeric" placeholder="0" min="0" step="1000">
+      </div>
+    </div>
+
+    <div id="houseParts">
+      <div class="rows">
+        <div class="row">
+          <div class="lab"><label for="dpct">Down payment</label>
+            <span class="sub">The share you pay up front. People commonly use anywhere from 3% to 20%.</span></div>
+          <div class="field"><div class="money-in"><span style="left:auto;right:15px">%</span>
+            <input type="number" id="dpct" inputmode="decimal" value="10" min="0" max="100" step="0.5"
+                   style="padding-left:13px;padding-right:34px"></div></div>
+        </div>
+      </div>
+
+      <h2 style="margin-top:36px">The part people forget</h2>
+      <p class="hint">A down payment is not the cash you need. These come due at the same time.</p>
+      <div class="rows" id="extras"></div>
+    </div>
+
+    <div class="total">
+      <span class="k" id="totK">Cash you'll actually need</span>
+      <span class="v" id="totV">$0</span>
+    </div>
+  </section>
+
+  <!-- ============ PACE ============ -->
+  <section>
+    <h2>Where you are, and how fast</h2>
+    <div class="rows">
+      <div class="row">
+        <div class="lab"><label for="have">Saved toward this so far</label></div>
+        <div class="field"><div class="money-in"><span>$</span>
+          <input type="number" id="have" inputmode="numeric" placeholder="0" min="0" step="100"></div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:26px">
+      <label id="solveLbl">Which do you want to work out?</label>
+      <div class="seg" id="solve" role="group" aria-labelledby="solveLbl">
+        <button data-s="date" aria-pressed="true">I know my monthly<br>→ find my date</button>
+        <button data-s="mo"   aria-pressed="false">I know my date<br>→ find my monthly</button>
+      </div>
+    </div>
+
+    <div style="margin-top:22px">
+      <div id="wMonthly">
+        <label for="monthly">Putting away each month</label>
+        <div class="field"><div class="money-in"><span>$</span>
+          <input type="number" id="monthly" inputmode="numeric" placeholder="0" min="0" step="25"></div></div>
+      </div>
+      <div id="wDate" hidden>
+        <label for="when">Want it by</label>
+        <div class="field"><input type="month" id="when" style="padding-left:13px"></div>
+      </div>
+    </div>
+
+    <div class="result" id="res" hidden>
+      <p class="eyebrow" id="resK">You get there</p>
+      <p class="figure" id="resV">—</p>
+      <p class="sub2" id="resS"></p>
+      <div class="bar" aria-hidden="true"><i id="fill"></i></div>
+      <p class="gap" id="gap"></p>
+    </div>
+
+    <div class="drift" id="drift" hidden>
+      <p class="t">Your target moved</p>
+      <p id="driftBody"></p>
+      <p class="src" id="driftSrc"></p>
+    </div>
+  </section>
+
+  <!-- ============ TRADEOFF ============ -->
+  <section>
+    <h2>Do you have debt right now?</h2>
+    <p class="hint">If you do, the same dollar can go two places. We'll show you what each one costs — the choice stays yours.</p>
+    <div class="flag" id="fromLadder" hidden style="border-style:solid;border-color:var(--breath);background:var(--breath-lt);margin-bottom:var(--s3)"></div>
+    <div class="rows">
+      <div class="row">
+        <div class="lab"><label for="dbal">What you owe</label>
+          <span class="sub">Cards, personal loans. Skip student loans and the mortgage for now.</span></div>
+        <div class="field"><div class="money-in"><span>$</span>
+          <input type="number" id="dbal" inputmode="numeric" placeholder="0" min="0" step="100"></div></div>
+      </div>
+      <div class="row">
+        <div class="lab"><label for="drate">The interest rate on it</label></div>
+        <div class="field"><div class="money-in"><span style="left:auto;right:15px">%</span>
+          <input type="number" id="drate" inputmode="decimal" placeholder="0" min="0" max="99" step="0.1"
+                 style="padding-left:13px;padding-right:34px"></div></div>
+      </div>
+    </div>
+
+    <div class="paths" id="paths" hidden>
+      <div class="path" id="pA">
+        <p class="pt">Split it — save and pay at the same time</p>
+        <p class="line" id="lA"></p>
+      </div>
+      <div class="path" id="pB">
+        <p class="pt">Clear the debt first, then save hard</p>
+        <p class="line" id="lB"></p>
+      </div>
+      <p class="choose" id="choose"></p>
+    </div>
+
+    <div class="flag" id="flag" hidden></div>
+  </section>
+
+  <section>
+    <button class="btn" id="save">Save my file</button>
+    <br><button class="btn-quiet" id="loadBtn">Load a saved file</button>
+    <input type="file" id="loadFile" accept=".json" hidden>
+    <p class="hint" style="margin-top:18px">Nothing you typed left this page.</p>
+  </section>
+
+  <footer>
+    This is general education, not financial advice. We don't know your full situation, and we don't
+    recommend specific loans, lenders, accounts, or products. Price movement is indexed to public data
+    from the Federal Housing Finance Agency and the U.S. Bureau of Labor Statistics.
+  </footer>
+</div>
+
+<script>
+/* ================= INDEX DATA =================
+   Replace quarterly/monthly from FRED (free API):
+     house → FHFA House Price Index, series USSTHPI
+     other → CPI-U, series CPIAUCSL
+   `rate` is the trailing 12-month change. `asOf` labels the vintage. */
+const INDEX = {
+  house: { rate:0.042, asOf:'Q2 2026', src:'FHFA House Price Index (USSTHPI)' },
+  car:   { rate:0.021, asOf:'June 2026', src:'CPI-U, new & used vehicles' },
+  wed:   { rate:0.028, asOf:'June 2026', src:'CPI-U, all items' },
+  other: { rate:0.028, asOf:'June 2026', src:'CPI-U, all items' }
+};
+
+/* live rates from /api/indexes; the values above are the fallback */
+fetch('/api/indexes')
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(d => {
+    const fmt = s => new Date(s + 'T00:00:00')
+      .toLocaleDateString('en-US', {month:'long', year:'numeric'});
+    if (d.house && d.house.yoy != null){
+      INDEX.house.rate = d.house.yoy;
+      INDEX.house.asOf = fmt(d.house.as_of);
+    }
+    if (d.cpi && d.cpi.yoy != null){
+      ['car','wed','other'].forEach(k => {
+        INDEX[k].rate = d.cpi.yoy;
+        INDEX[k].asOf = fmt(d.cpi.as_of);
+      });
+    }
+    run();
+  })
+  .catch(() => {});
+
+const TPL = {
+  house:{ head:'What does the home cost?',
+          hint:'The asking price of the kind of place you want. A rough number is fine.',
+          totK:'Cash you\'ll actually need', parts:true },
+  car:  { head:'What does the car cost?',
+          hint:'The sticker price of the car you have in mind.',
+          totK:'Cash you\'ll actually need', parts:true },
+  wed:  { head:'What will the wedding cost?',
+          hint:'Everything in — venue, food, the lot.',
+          totK:'What you\'re saving for', parts:false },
+  other:{ head:'What does it cost?', hint:'Your best estimate today.',
+          totK:'What you\'re saving for', parts:false }
+};
+
+/* extra cash needs, by template. pct = share of price; flat = dollars */
+const EXTRAS = {
+  house:[
+    {id:'close', l:'Closing costs',       s:'Loan fees, title, taxes at signing. Commonly 2% to 5% of the price.', pct:3},
+    {id:'insp',  l:'Inspection & appraisal', s:'Before you buy, not after.', flat:900},
+    {id:'move',  l:'Moving',              s:'Truck, deposits, turning the power on.', flat:1500},
+    {id:'fix',   l:'Repairs in month one', s:'The one everybody forgets. Something always needs doing.', flat:3000},
+    {id:'cush',  l:'Cash left over after', s:'So a flat tire in month two is not a crisis. This is your Step 1 pile.', flat:2350}
+  ],
+  car:[
+    {id:'ttl',  l:'Tax, title & registration', s:'Varies by state. Commonly 6% to 10%.', pct:7},
+    {id:'insp2',l:'Inspection',           s:'Worth it on a used car.', flat:200},
+    {id:'cush2',l:'Cash left over after', s:'Tires and a battery arrive sooner than you think.', flat:1000}
+  ],
+  wed:[], other:[]
+};
+
+const $   = id => document.getElementById(id);
+const usd = n => '$' + Math.round(n).toLocaleString('en-US');
+const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const monthName = d => MON[d.getMonth()] + ' ' + d.getFullYear();
+
+let kind = 'house';
+
+/* ---------- text size ---------- */
+document.querySelectorAll('.tsize .set button').forEach(b =>
+  b.addEventListener('click', () => {
+    document.body.classList.remove('t-lg','t-xl');
+    if (b.dataset.t) document.body.classList.add(b.dataset.t);
+    document.querySelectorAll('.tsize .set button').forEach(x => x.setAttribute('aria-pressed', x===b));
+  }));
+
+/* ---------- template ---------- */
+$('tpl').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  kind = b.dataset.k;
+  document.querySelectorAll('#tpl button').forEach(x => x.setAttribute('aria-pressed', x===b));
+  const t = TPL[kind];
+  $('tHead').textContent = t.head;
+  $('tHint').textContent = t.hint;
+  $('totK').textContent  = t.totK;
+  $('houseParts').hidden = !t.parts;
+  $('nameWrap').hidden   = kind !== 'other';
+  buildExtras();
+  run();
+});
+
+function buildExtras(){
+  const host = $('extras'); host.innerHTML = '';
+  (EXTRAS[kind] || []).forEach(x => {
+    const d = document.createElement('div');
+    d.className = 'row';
+    d.innerHTML =
+      '<div class="lab"><label for="x_'+x.id+'">'+x.l+'</label>'+
+        (x.s ? '<span class="sub">'+x.s+'</span>' : '')+'</div>'+
+      '<div class="field"><div class="money-in"><span>$</span>'+
+        '<input type="number" id="x_'+x.id+'" class="xtr" data-pct="'+(x.pct||0)+
+        '" data-flat="'+(x.flat||0)+'" inputmode="numeric" min="0" step="50"></div></div>';
+    host.appendChild(d);
+  });
+  seedExtras();
+}
+
+/* pct-based extras follow the price until the user overrides them */
+function seedExtras(){
+  const price = +$('price').value || 0;
+  document.querySelectorAll('.xtr').forEach(f => {
+    if (f.dataset.touched) return;
+    const pct = +f.dataset.pct, flat = +f.dataset.flat;
+    f.value = pct ? Math.round(price * pct / 100) : flat;
+  });
+}
+document.addEventListener('input', e => {
+  if (e.target.classList.contains('xtr')) e.target.dataset.touched = '1';
+  if (e.target.tagName === 'INPUT'){ if (e.target.id === 'price') seedExtras(); run(); }
+});
+
+/* ---------- solve direction ---------- */
+let solveFor = 'date';
+$('solve').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  solveFor = b.dataset.s;
+  document.querySelectorAll('#solve button').forEach(x => x.setAttribute('aria-pressed', x===b));
+  $('wMonthly').hidden = solveFor !== 'date';
+  $('wDate').hidden    = solveFor !== 'mo';
+  run();
+});
+
+/* ---------- math ---------- */
+function targetToday(){
+  const price = +$('price').value || 0;
+  if (!price) return 0;
+  if (!TPL[kind].parts) return price;
+  const dp = price * ((+$('dpct').value || 0) / 100);
+  let extra = 0;
+  document.querySelectorAll('.xtr').forEach(f => extra += (+f.value || 0));
+  return dp + extra;
+}
+
+/* target at month m, growing at the index rate */
+const targetAt = (base, m) => base * Math.pow(1 + INDEX[kind].rate/12, m);
+
+/* months until savings catch a moving target */
+function monthsToReach(base, have, per){
+  const g = INDEX[kind].rate / 12;
+  if (per <= 0) return Infinity;
+  let bal = have;
+  for (let m = 1; m <= 600; m++){
+    bal += per;
+    if (bal >= targetAt(base, m)) return m;
+  }
+  return Infinity;
+}
+
+/* monthly needed to hit a moving target by month m */
+function perNeeded(base, have, m){
+  if (m <= 0) return Infinity;
+  return Math.max(0, (targetAt(base, m) - have) / m);
+}
+
+/* interest paid clearing `bal` at `apr` with `pay`/month */
+function payoff(bal, apr, pay){
+  const r = apr/100/12;
+  let owed = bal, paid = 0;
+  for (let m = 1; m <= 600; m++){
+    const int = owed * r;
+    if (pay <= int) return {months: Infinity, interest: Infinity};
+    paid += int;
+    owed += int - pay;
+    if (owed <= 0) return {months: m, interest: paid};
+  }
+  return {months: Infinity, interest: Infinity};
+}
+
+function run(){
+  const base = targetToday();
+  $('totV').textContent = usd(base);
+  if (!base){ $('res').hidden = true; $('drift').hidden = true; $('paths').hidden = true; $('flag').hidden = true; return; }
+
+  const have = +$('have').value || 0;
+  const ix = INDEX[kind];
+  let months, per;
+
+  if (solveFor === 'date'){
+    per = +$('monthly').value || 0;
+    if (!per){ $('res').hidden = true; $('drift').hidden = true; $('paths').hidden = true; return; }
+    months = monthsToReach(base, have, per);
+  } else {
+    const w = $('when').value;
+    if (!w){ $('res').hidden = true; $('drift').hidden = true; $('paths').hidden = true; return; }
+    const d = new Date(w + '-01T00:00:00');
+    const now = new Date();
+    months = (d.getFullYear()-now.getFullYear())*12 + (d.getMonth()-now.getMonth());
+    if (months <= 0){ $('res').hidden = true; return; }
+    per = perNeeded(base, have, months);
+  }
+
+  $('res').hidden = false;
+  const reached = new Date(); reached.setMonth(reached.getMonth() + (isFinite(months) ? months : 0));
+
+  if (solveFor === 'date'){
+    $('resK').textContent = 'You get there';
+    if (!isFinite(months)){
+      $('resV').textContent = 'Not yet';
+      $('resS').textContent = 'At this pace the price is rising faster than your savings. Try a higher monthly amount.';
+    } else {
+      $('resV').textContent = monthName(reached);
+      $('resS').textContent = months + ' months from now, at ' + usd(per) + ' a month.';
+    }
+  } else {
+    $('resK').textContent = 'You would need';
+    $('resV').textContent = usd(per) + ' /mo';
+    $('resS').textContent = 'For ' + months + ' months, to be ready by ' + monthName(reached) + '.';
+  }
+
+  const goal = isFinite(months) ? targetAt(base, months) : base;
+  const pct = Math.min(100, (have / goal) * 100);
+  $('fill').style.width = pct + '%';
+  $('gap').innerHTML = "You have <b>" + usd(have) + "</b> of <b>" + usd(goal) + "</b> — " +
+                        Math.round(pct) + "% there.";
+
+  /* ---- the target breathes ---- */
+  const q = base * ix.rate / 4;
+  const holdPer = isFinite(months) && months > 0 ? perNeeded(base, have, months) : 0;
+  const flatPer = isFinite(months) && months > 0 ? Math.max(0, (base - have) / months) : 0;
+  $('drift').hidden = false;
+  $('driftBody').innerHTML =
+    'Prices in this category rose <b>' + (ix.rate*100).toFixed(1) + '%</b> over the last year.<br>' +
+    'That adds about <b>' + usd(q) + '</b> to your number every quarter.<br><br>' +
+    (isFinite(months) && months > 0
+      ? 'If the price stood still you would need ' + usd(flatPer) + ' a month. Because it moves, you need <b>' +
+        usd(holdPer) + '</b>. That gap is the difference between a plan that works and one that quietly falls short.'
+      : 'Set a monthly amount above and we will show you what the movement costs you.');
+  $('driftSrc').textContent = 'Source: ' + ix.src + ' · as of ' + ix.asOf + ' · we check every month';
+
+  tradeoff(base, have, per, months);
+  stepOneFlag();
+}
+
+/* ---------- the tradeoff ---------- */
+function tradeoff(base, have, per, months){
+  const bal = +$('dbal').value || 0, apr = +$('drate').value || 0;
+  if (!bal || !apr || !per || !isFinite(months)){ $('paths').hidden = true; return; }
+  $('paths').hidden = false;
+
+  /* A — split: half to debt, half to the goal */
+  const half = per / 2;
+  const a = payoff(bal, apr, half);
+  const aMonths = monthsToReach(base, have, half === 0 ? 0 : half);
+  /* after the debt clears, the full amount resumes toward the goal */
+  let balA = have, mA = 0;
+  if (isFinite(a.months)){
+    for (let m = 1; m <= 600; m++){
+      balA += (m <= a.months ? half : per);
+      if (balA >= targetAt(base, m)){ mA = m; break; }
+    }
+  }
+  const dateA = new Date(); dateA.setMonth(dateA.getMonth() + (mA || 0));
+
+  /* B — debt first, then everything to the goal */
+  const b = payoff(bal, apr, per);
+  let balB = have, mB = 0;
+  if (isFinite(b.months)){
+    for (let m = 1; m <= 600; m++){
+      balB += (m <= b.months ? 0 : per);
+      if (balB >= targetAt(base, m)){ mB = m; break; }
+    }
+  }
+  const dateB = new Date(); dateB.setMonth(dateB.getMonth() + (mB || 0));
+
+  if (!isFinite(a.interest) || !isFinite(b.interest) || !mA || !mB){ $('paths').hidden = true; return; }
+
+  const diffInt = a.interest - b.interest;
+  const diffMon = mA - mB;
+
+  $('lA').innerHTML =
+    'Debt gone in <b>' + a.months + ' months</b>.<br>' +
+    'Ready by <b>' + monthName(dateA) + '</b>.<br>' +
+    'Interest paid along the way: <span class="cost">' + usd(a.interest) + '</span>';
+  $('lB').innerHTML =
+    'Debt gone in <b>' + b.months + ' months</b>.<br>' +
+    'Ready by <b>' + monthName(dateB) + '</b>.<br>' +
+    'Interest paid along the way: <span class="cost">' + usd(b.interest) + '</span>';
+
+  $('pA').classList.toggle('best', diffInt < 0);
+  $('pB').classList.toggle('best', diffInt > 0);
+
+  $('choose').innerHTML = diffInt > 0
+    ? 'Clearing the debt first saves you <span class="save">' + usd(diffInt) + '</span> and gets you there <b>' +
+      Math.abs(diffMon) + ' months ' + (diffMon > 0 ? 'sooner' : 'later') + '</b>. ' +
+      'Splitting it means watching the balance drop from day one, which some people need. ' +
+      'Now you know what that comfort costs.'
+    : 'Splitting comes out ahead here by <span class="save">' + usd(Math.abs(diffInt)) + '</span>. ' +
+      'At this rate the debt is not expensive enough to outrun a moving price.';
+}
+
+/* ---------- Step 1 reminder ---------- */
+function stepOneFlag(){
+  const bal = +$('dbal').value || 0;
+  $('flag').hidden = false;
+  $('flag').innerHTML = bal > 0
+    ? 'People at this stage commonly fill the small safety pile from Step 1 first — so one flat tire does not go on the card and undo the month.'
+    : 'People at this stage commonly keep the Step 1 safety pile separate from this goal, so an emergency does not empty the fund.';
+}
+
+/* ---------- shared ladder file ----------
+   Schema v4 keeps debts in one array across pages. Step 1 writes `minimum`,
+   Step 2 writes `balance` + `apr`. Here we use whichever is furthest along:
+   if any debt carries a real balance and rate, we run the tradeoff on the
+   weighted blend rather than asking the user to retype it. */
+let ladder = null;
+
+function debtFromLadder(){
+  if (!ladder || !Array.isArray(ladder.debts)) return null;
+  const priced = ladder.debts.filter(d => d.balance > 0 && d.apr > 0);
+  if (!priced.length) return null;
+  const bal = priced.reduce((t,d) => t + d.balance, 0);
+  const apr = priced.reduce((t,d) => t + d.balance * d.apr, 0) / bal;
+  return { bal, apr: +apr.toFixed(2), n: priced.length,
+           worst: priced.slice().sort((a,b) => b.apr - a.apr)[0] };
+}
+
+function applyLadder(){
+  const d = debtFromLadder();
+  const box = $('fromLadder');
+  if (!d){ box.hidden = true; return; }
+  $('dbal').value = Math.round(d.bal);
+  $('drate').value = d.apr;
+  box.hidden = false;
+  box.innerHTML = 'Pulled from your saved file: <b>' + d.n + ' debt' + (d.n>1?'s':'') +
+    '</b> totalling <b>' + usd(d.bal) + '</b> at a blended <b>' + d.apr + '%</b>' +
+    (d.n > 1 ? '. Your most expensive is ' + d.worst.label + ' at ' + d.worst.apr + '%.' : '.') +
+    '<br>You can change these below if you want to model something different.';
+  run();
+}
+
+/* also seed the Step 1 cushion line from the real safety number */
+function applyCushion(){
+  if (!ladder || !ladder.target_at_save) return;
+  const el = $('x_cush');
+  if (el && !el.dataset.touched){ el.value = Math.round(ladder.target_at_save); run(); }
+}
+
+/* ---------- save / load ---------- */
+$('save').addEventListener('click', () => {
+  const xs = {};
+  document.querySelectorAll('.xtr').forEach(f => xs[f.id.slice(2)] = +f.value || 0);
+  const goal = { id:'g1', kind, label:$('goalName').value || TPL[kind].head,
+    price:+$('price').value||0, dpct:+$('dpct').value||0,
+    saved:+$('have').value||0, solve_for:solveFor,
+    monthly:+$('monthly').value||0, target_date:$('when').value||null,
+    extras:xs, index_used:INDEX[kind] };
+
+  /* preserve everything the ladder file already held */
+  const d = Object.assign({}, ladder || {}, {
+    v:4, saved_at:new Date().toISOString(),
+    debts: (ladder && ladder.debts) || [],
+    goals: [goal]
+  });
+  const url = URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));
+  Object.assign(document.createElement('a'), {href:url, download:'my-ladder.json'}).click();
+  URL.revokeObjectURL(url);
+});
+
+$('loadBtn').addEventListener('click', () => $('loadFile').click());
+$('loadFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{
+      ladder = JSON.parse(r.result);
+      const g = (ladder.goals && ladder.goals[0]) || ladder;   /* tolerate older files */
+      if (g.kind) document.querySelector('#tpl button[data-k="'+g.kind+'"]').click();
+      $('price').value = g.price || ''; $('dpct').value = g.dpct || 10;
+      $('have').value  = g.saved ?? g.have ?? '';
+      $('monthly').value = g.monthly || '';
+      if (g.target_date || g.when) $('when').value = g.target_date || g.when;
+      if (g.label && kind === 'other') $('goalName').value = g.label;
+      seedExtras();
+      Object.entries(g.extras || {}).forEach(([k,v]) => {
+        const el = $('x_'+k); if (el){ el.value = v; el.dataset.touched = '1'; }
+      });
+      document.querySelector('#solve button[data-s="'+(g.solve_for || g.solveFor || 'date')+'"]').click();
+      applyCushion();
+      applyLadder();
+      run();
+    } catch { alert("That file didn't open. Pick the my-ladder.json file you saved."); }
+  };
+  r.readAsText(f);
+});
+
+buildExtras();
+run();
+</script>
+</body>
+</html>

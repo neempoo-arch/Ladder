@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Step 1 — Your safety number</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Karla:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* colour */
+    --paper:#F7F4ED; --card:#FFFFFF; --line:#C9C2B4;
+    --ink:#141D22; --body:#22303A; --mute:#465A66; --faint:#5B6E78;
+    --teal:#15665A; --teal-lt:#E2EFEB;
+    --coin:#9A5411; --coin-lt:#F7EDE1;
+
+    /* one spacing scale, used everywhere */
+    --s1:8px; --s2:14px; --s3:22px; --s4:34px; --s5:52px;
+
+    /* one radius scale */
+    --r-sm:10px; --r-md:14px; --r-lg:18px;
+
+    /* one width scale */
+    --w-text:560px; --w-card:440px; --w-field:320px;
+
+    --bd:2px;
+    --fs:18px;
+    --pad:clamp(20px,5vw,40px);
+  }
+  body.t-lg{--fs:20px}
+  body.t-xl{--fs:22px}
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  body{background:var(--paper);color:var(--body);
+       font-family:'Karla',system-ui,sans-serif;
+       font-size:var(--fs);font-weight:500;line-height:1.65;text-align:center}
+  .wrap{max-width:var(--w-text);margin:0 auto;padding:0 var(--pad)}
+
+  /* ---------- type ---------- */
+  .eyebrow{font-size:calc(var(--fs)*.72);letter-spacing:.16em;text-transform:uppercase;
+           color:var(--mute);font-weight:700}
+  h1,h2{font-family:'Bitter',Georgia,serif;color:var(--ink)}
+  h1{font-weight:700;font-size:clamp(34px,8.5vw,50px);line-height:1.12;
+     letter-spacing:-.015em;margin:var(--s2) 0 var(--s2)}
+  h2{font-weight:700;font-size:calc(var(--fs)*1.35);line-height:1.28}
+  .lede{color:var(--mute);font-size:calc(var(--fs)*1.06);font-weight:600}
+  .plain{font-size:calc(var(--fs)*1.05);line-height:1.6;color:var(--body);font-weight:500}
+  .plain strong{font-weight:700;color:var(--ink)}
+  .hint{color:var(--mute);font-size:calc(var(--fs)*.88);line-height:1.55;font-weight:500}
+  p+p{margin-top:var(--s2)}
+
+  /* ---------- rhythm: every section identical ---------- */
+  header{padding:var(--s5) 0 var(--s4)}
+  section{padding:var(--s5) 0;border-top:1px solid var(--line)}
+  section>h2+.hint{margin-top:var(--s1)}
+  .stack>*+*{margin-top:var(--s3)}
+
+  /* ---------- controls ---------- */
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .btn{background:var(--teal);color:#fff;padding:15px 32px;border-radius:100px;
+       font-weight:700;font-size:var(--fs);transition:opacity .18s}
+  .btn:hover{opacity:.9}
+  .btn-quiet{color:var(--mute);font-size:calc(var(--fs)*.85);font-weight:700;
+             text-decoration:underline;text-underline-offset:4px;padding:11px;display:inline-block}
+  .btn-quiet:hover{color:var(--ink)}
+  :focus-visible{outline:2.5px solid var(--teal);outline-offset:3px;border-radius:4px}
+
+  .tsize{display:flex;align-items:center;gap:var(--s1);justify-content:center;
+         color:var(--mute);font-size:calc(var(--fs)*.78);font-weight:700}
+  .tsize .set{display:flex;border:var(--bd) solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+  .tsize .set button{padding:6px 14px;background:var(--card);color:var(--body);font-weight:700;line-height:1}
+  .tsize .set button:nth-child(1){font-size:14px}
+  .tsize .set button:nth-child(2){font-size:17px}
+  .tsize .set button:nth-child(3){font-size:20px}
+  .tsize .set button[aria-pressed=true]{background:var(--teal);color:#fff}
+
+  label{display:block;font-weight:700;font-size:var(--fs);margin-bottom:var(--s1);color:var(--ink)}
+  .field{max-width:var(--w-field);margin:0 auto}
+  .money-in{position:relative}
+  .money-in>span{position:absolute;left:15px;top:50%;transform:translateY(-50%);
+                 color:var(--mute);font-size:calc(var(--fs)*1.05);pointer-events:none;font-weight:700}
+  input[type=number]{width:100%;background:var(--card);border:var(--bd) solid var(--line);
+    border-radius:var(--r-md);color:var(--ink);font-family:'Karla';font-weight:700;
+    font-size:calc(var(--fs)*1.1);padding:13px 13px 13px 34px;text-align:center;
+    -moz-appearance:textfield;transition:border-color .15s}
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input[type=number]:focus{border-color:var(--teal);outline:none}
+  input::placeholder{color:#8A9AA2;font-weight:600}
+
+  /* segmented: always fills its field, so widths line up column to column */
+  .seg{display:flex;width:100%;border:var(--bd) solid var(--line);
+       border-radius:var(--r-sm);overflow:hidden;margin-top:var(--s1)}
+  .seg button{flex:1;padding:10px 4px;background:var(--card);color:var(--body);
+              font-size:calc(var(--fs)*.78);font-weight:700;line-height:1.3;transition:.15s}
+  .seg button:hover{background:var(--teal-lt)}
+  .seg button[aria-pressed=true]{background:var(--teal);color:#fff}
+
+  /* ---------- the fork ---------- */
+  .choice{display:grid;gap:var(--s2);margin:0 auto;max-width:var(--w-card)}
+  .card{display:block;width:100%;background:var(--card);border:var(--bd) solid var(--line);
+        border-radius:var(--r-lg);padding:var(--s3);text-align:center;transition:.15s}
+  .card:hover{border-color:var(--teal)}
+  .card.rec{border-color:var(--teal);background:var(--teal-lt)}
+  .card .cb{display:inline-block;margin-bottom:var(--s1);background:var(--teal);color:#fff;
+            font-size:calc(var(--fs)*.66);font-weight:700;letter-spacing:.1em;
+            text-transform:uppercase;padding:5px 12px;border-radius:100px}
+  .card .ct{display:block;font-family:'Bitter',Georgia,serif;font-weight:700;
+            font-size:calc(var(--fs)*1.15);color:var(--ink);margin-bottom:6px;line-height:1.25}
+  .card .cs{display:block;font-size:calc(var(--fs)*.85);color:var(--mute);
+            line-height:1.5;font-weight:500}
+  .nudge{font-size:calc(var(--fs)*.86);color:var(--mute);font-weight:500;line-height:1.55}
+  .nudge button{color:var(--teal);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+
+  /* ---------- walkthrough ---------- */
+  .note{color:var(--mute);font-size:calc(var(--fs)*.88);line-height:1.6;
+        font-weight:500;max-width:var(--w-card);margin:0 auto}
+  .pills{display:flex;gap:var(--s2);margin:0 auto;max-width:var(--w-field)}
+  .pills.three{max-width:var(--w-card);gap:var(--s1)}
+  .pills.three .pill{padding:12px 6px;font-size:calc(var(--fs)*.88)}
+  .pill{flex:1;background:var(--card);border:var(--bd) solid var(--line);
+        border-radius:var(--r-md);padding:14px;font-weight:700;font-size:var(--fs);
+        color:var(--body);transition:.15s}
+  .pill:hover{border-color:var(--teal)}
+  .pill[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+  .askhelp{max-width:var(--w-card);margin:var(--s2) auto 0;background:var(--coin-lt);
+           border:var(--bd) solid var(--coin);border-radius:var(--r-md);padding:var(--s3);
+           font-size:calc(var(--fs)*.85);color:var(--body);line-height:1.6;font-weight:500}
+  .askhelp b{color:var(--ink);font-weight:700}
+  .rowlock{max-width:var(--w-card);margin:var(--s2) auto 0;color:var(--faint);
+           font-size:calc(var(--fs)*.82);font-weight:600;line-height:1.5}
+
+  /* ---------- pinned meter ---------- */
+  .meter{position:sticky;top:0;z-index:20;background:var(--paper);
+         border-bottom:var(--bd) solid var(--teal);
+         padding:var(--s2) var(--pad);margin:0 calc(var(--pad)*-1);
+         display:none}
+  .meter.on{display:block}
+  .meter .mk{display:block;font-size:calc(var(--fs)*.72);letter-spacing:.12em;
+             text-transform:uppercase;color:var(--teal);font-weight:700}
+  .meter .mv{font-family:'Bitter',Georgia,serif;font-weight:700;
+             font-size:calc(var(--fs)*1.5);color:var(--ink);
+             font-variant-numeric:tabular-nums;line-height:1.2}
+  .meter .md{font-size:calc(var(--fs)*.78);font-weight:700;color:var(--coin);
+             margin-left:6px;opacity:0;transition:opacity .25s}
+  .meter .md.show{opacity:1}
+  .meter .ms{display:block;font-size:calc(var(--fs)*.76);color:var(--mute);
+             font-weight:600;margin-top:2px}
+
+  /* ---------- qualifying gate ---------- */
+  .gate{padding:var(--s3) var(--s3) var(--s4)}
+  .gate .gq{font-size:calc(var(--fs)*1);font-weight:700;color:var(--ink);
+            margin-bottom:var(--s2);line-height:1.4}
+  .gate .gopts{display:flex;gap:var(--s2);max-width:var(--w-field);margin:0 auto}
+  .gate .gopts button{flex:1;background:var(--card);border:var(--bd) solid var(--line);
+    border-radius:var(--r-md);padding:13px;font-weight:700;font-size:var(--fs);
+    color:var(--body);transition:.15s}
+  .gate .gopts button:hover{border-color:var(--teal)}
+  .grp.skipped{background:#F2EFE7;border-color:var(--line)}
+  .grp.skipped .gname{color:var(--faint)}
+  .gskip{display:block;margin:var(--s3) auto 0;color:var(--mute);
+         font-size:calc(var(--fs)*.84);font-weight:700;text-decoration:underline;
+         text-underline-offset:4px}
+  .gskip:hover{color:var(--ink)}
+  .gundo{display:block;margin:0 auto;padding:var(--s2);color:var(--teal);
+         font-size:calc(var(--fs)*.84);font-weight:700;text-decoration:underline;
+         text-underline-offset:4px}
+  /* ---------- accordion sections ---------- */
+  #groups{display:grid;gap:var(--s2)}
+  .grp{border:var(--bd) solid var(--line);border-radius:var(--r-lg);
+       background:var(--card);overflow:hidden;transition:border-color .18s,background .18s}
+  .grp.open{border-color:var(--teal)}
+  .grp.done:not(.open){background:var(--teal-lt);border-color:var(--teal)}
+  .ghead{width:100%;position:relative;padding:var(--s3) 44px;text-align:center;background:none}
+  .ghead:hover{background:var(--teal-lt)}
+  .grp.open .ghead:hover{background:none}
+  .ghead .gname{display:block;font-family:'Karla';font-size:calc(var(--fs)*.76);font-weight:700;
+                letter-spacing:.15em;text-transform:uppercase;color:var(--teal);line-height:1.4}
+  .ghead .gsum{display:block;margin-top:5px;font-size:calc(var(--fs)*.92);
+               color:var(--faint);font-weight:600;font-variant-numeric:tabular-nums}
+  .ghead .gsum.has{color:var(--ink);font-weight:700}
+  .ghead .chev{position:absolute;right:var(--s3);top:50%;margin-top:-11px;
+               width:22px;height:22px;color:var(--mute);transition:transform .2s}
+  .grp.open .chev{transform:rotate(90deg);color:var(--teal)}
+  .gbody{display:none;padding:0 var(--s3) var(--s4)}
+  .grp.open .gbody{display:block}
+  .gbody>.blurb{color:var(--faint);font-size:calc(var(--fs)*.84);line-height:1.55;
+                font-weight:500;max-width:var(--w-card);margin:0 auto var(--s2)}
+  .gnext{margin-top:var(--s4);width:100%;background:var(--teal);color:#fff;
+         padding:13px;border-radius:100px;font-weight:700;font-size:calc(var(--fs)*.92)}
+  .gnext:hover{opacity:.9}
+  .gprog{color:var(--mute);font-size:calc(var(--fs)*.82);font-weight:700;
+         letter-spacing:.06em;text-transform:uppercase}
+  .rows{display:grid;gap:var(--s4);margin-top:var(--s3)}
+  .row.hide{display:none}
+  .row.hide-esc{display:none}
+  .row label{font-size:calc(var(--fs)*.98);margin-bottom:4px}
+  .row .sub{display:block;font-size:calc(var(--fs)*.8);color:var(--faint);
+            line-height:1.45;margin-bottom:var(--s2);font-weight:500;
+            max-width:var(--w-card);margin-left:auto;margin-right:auto}
+  .row .field{max-width:240px}
+  .row input[type=number]{font-size:calc(var(--fs)*1.02);padding:12px 12px 12px 31px}
+  .row .money-in>span{left:12px;font-size:calc(var(--fs)*1)}
+  .row .conv{display:block;font-size:calc(var(--fs)*.82);color:var(--coin);
+             margin-top:var(--s1);font-weight:700;min-height:1.35em}
+
+  /* ---------- panels: all share padding, radius, border ---------- */
+  .panel{border:var(--bd) solid var(--line);border-radius:var(--r-lg);
+         padding:var(--s4) var(--s3);background:var(--card)}
+  .panel.tealed{background:var(--teal-lt);border-color:var(--teal);
+                border-radius:var(--r-md);padding:var(--s3)}
+  .running{position:sticky;bottom:var(--s1);margin-top:var(--s4)}
+  .running .k{display:block;font-size:calc(var(--fs)*.78);color:var(--teal);font-weight:700;
+              letter-spacing:.08em;text-transform:uppercase}
+  .running .v{font-family:'Bitter',Georgia,serif;font-weight:700;font-size:calc(var(--fs)*1.6);
+              color:var(--ink);font-variant-numeric:tabular-nums}
+  .running .u{font-size:calc(var(--fs)*.75);font-family:'Karla';color:var(--mute);font-weight:600}
+
+  .result .eyebrow{color:var(--coin)}
+  .figure{font-family:'Bitter',Georgia,serif;font-weight:700;font-size:clamp(46px,13vw,70px);
+    line-height:1.05;color:var(--coin);letter-spacing:-.02em;margin:var(--s2) 0 var(--s1);
+    font-variant-numeric:tabular-nums}
+  .basis{color:var(--mute);font-size:calc(var(--fs)*.92);font-weight:500}
+  .drift{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--line);
+         font-size:calc(var(--fs)*.92);color:var(--mute);line-height:1.75;font-weight:500}
+  .drift b{color:var(--ink);font-weight:700}
+  .drift .soft{color:var(--faint)}
+
+  .bar{height:10px;background:#DDD6C8;border-radius:100px;overflow:hidden;
+       margin:0 auto;max-width:var(--w-field)}
+  .bar i{display:block;height:100%;background:var(--coin);width:0;border-radius:100px;
+         transition:width .8s cubic-bezier(.2,.7,.3,1)}
+  .gap{font-size:calc(var(--fs)*.94);color:var(--mute);font-weight:500}
+  .gap b{color:var(--ink);font-weight:700}
+
+  .privacy{color:var(--mute);font-size:calc(var(--fs)*.88);line-height:1.55;
+           font-weight:500;max-width:var(--w-card);margin:0 auto}
+  .privacy svg{vertical-align:-3px;margin-right:6px}
+
+  .next b{display:block;font-family:'Bitter',Georgia,serif;font-size:calc(var(--fs)*1.3);
+          font-weight:700;color:var(--ink);margin-bottom:var(--s1)}
+  .next{color:var(--mute);font-size:var(--fs);font-weight:500}
+
+  footer{padding:var(--s4) 0 var(--s5);border-top:1px solid var(--line);
+         color:var(--faint);font-size:calc(var(--fs)*.84);line-height:1.7;font-weight:500}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{transition-duration:.15s!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="tsize">
+      <span>Text size</span>
+      <div class="set" role="group" aria-label="Text size">
+        <button data-t="" aria-pressed="true">A</button>
+        <button data-t="t-lg" aria-pressed="false">A</button>
+        <button data-t="t-xl" aria-pressed="false">A</button>
+      </div>
+    </div>
+    <p class="eyebrow" style="margin-top:var(--s4)">Step 1 of 5</p>
+    <h1>Take a breath.</h1>
+    <p class="lede">Then we'll find your safety number.</p>
+  </header>
+
+  <section style="border-top:none;padding-top:0">
+    <div class="stack">
+      <p class="plain">All things cost money. A new tire. A dentist visit. A trip to the vet.</p>
+      <p class="plain">None of it is really a surprise. It just doesn't arrive on a schedule.</p>
+      <p class="plain">So we build a small pile of cash to catch it. <strong>That is Step 1.</strong></p>
+    </div>
+  </section>
+
+  <!-- ============ THE FORK ============ -->
+  <section>
+    <div class="stack">
+      <h2>What do you spend on things you can't skip?</h2>
+
+      <div class="choice" id="choice">
+        <button class="card rec" id="cWalk">
+          <span class="cb">Do this one</span>
+          <span class="ct">Walk me through it</span>
+          <span class="cs">About two minutes. We ask about the costs that only show up once a year — car registration, oil changes, Christmas, new tires — and turn them into a monthly number.</span>
+        </button>
+        <button class="card" id="cKnow">
+          <span class="ct">I already know my number</span>
+          <span class="cs">Type one figure and keep moving.</span>
+        </button>
+      </div>
+
+      <div id="quickField" hidden>
+        <div class="stack">
+          <div class="field">
+            <div class="money-in"><span>$</span>
+              <input type="number" id="essentials" inputmode="numeric" placeholder="0" min="0" step="10">
+            </div>
+            <div class="seg" id="mainSeg" role="group" aria-label="Is that per month or per year?">
+              <button data-p="mo" aria-pressed="true">Per month</button>
+              <button data-p="yr" aria-pressed="false">Per year</button>
+            </div>
+          </div>
+          <p class="hint" id="mainConv" style="color:var(--coin);font-weight:700"></p>
+          <p class="nudge">Not sure it's right? Most people who guess miss the once-a-year costs by a few hundred dollars a month.
+            <br><button id="switchWalk">Walk me through it instead</button></p>
+        </div>
+      </div>
+
+      <div id="walk" hidden>
+        <div class="meter" id="meter" aria-live="polite">
+          <span class="mk">Your safety number</span>
+          <span class="mv" id="mVal">$0</span><span class="md" id="mDelta"></span>
+          <span class="ms" id="mSub">Add a few lines and this starts moving</span>
+        </div>
+        <div class="stack">
+          <p class="note">Enter any line however you know it — monthly or yearly. We'll do the rest.</p>
+          <div>
+            <label id="tenLabel">Do you rent or own?</label>
+            <div class="pills" role="group" aria-labelledby="tenLabel">
+              <button class="pill" data-ten="rent" aria-pressed="false">I rent</button>
+              <button class="pill" data-ten="own" aria-pressed="false">I own</button>
+            </div>
+          </div>
+          <p class="gprog" id="gprog">Section 1 of 8</p>
+          <div id="groups"></div>
+          <div class="panel tealed running">
+            <span class="k">Adding up to</span>
+            <span class="v" id="running">$0 <span class="u">a month</span></span>
+          </div>
+          <p class="nudge"><button id="switchQuick">Skip this and just type my number</button></p>
+        </div>
+      </div>
+
+      <div class="panel result" id="result" hidden>
+        <p class="eyebrow">Your safety number</p>
+        <p class="figure" id="figure">$0</p>
+        <p class="basis" id="basis"></p>
+        <div class="drift">
+          In 1992, this pile needed to be <b>$1,000</b>.<br>
+          Today the same safety costs <b id="floor">$2,350</b>.<br>
+          <span class="soft">Your number moves when prices move. We check every month.<br>
+          <span id="floorAsOf"></span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROGRESS ============ -->
+  <section id="progress-sec" hidden>
+    <div class="stack">
+      <div>
+        <label for="saved">How much do you have saved right now?</label>
+        <p class="hint" style="margin-bottom:var(--s2)">Cash you could actually reach today. Not your 401(k).</p>
+        <div class="field">
+          <div class="money-in"><span>$</span>
+            <input type="number" id="saved" inputmode="numeric" placeholder="0" min="0" step="10">
+          </div>
+        </div>
+      </div>
+      <div class="bar" aria-hidden="true"><i id="fill"></i></div>
+      <p class="gap" id="gap"></p>
+      <p class="privacy">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#465A66" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Nothing you typed left this page. Save a copy for yourself, and load it back next month.
+      </p>
+      <div>
+        <button class="btn" id="save">Save my file</button>
+        <br><button class="btn-quiet" id="loadBtn">Load a saved file</button>
+        <input type="file" id="loadFile" accept=".json" hidden>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="next"><b>Step 2 — Drink some water.</b>
+      Then we'll find the debt that's hurting you most. Not the biggest one. The one taking the most from your month.</p>
+  </section>
+
+  <footer>
+    This is general education, not financial advice. We don't know your full situation, and we don't
+    recommend specific accounts, products, or companies. Figures are indexed to the Consumer Price
+    Index (CPI-U) published by the U.S. Bureau of Labor Statistics.<br><br>
+    <a href="index.html" style="color:var(--mute);font-weight:700">Home</a> ·
+    <a href="privacy.html" style="color:var(--mute);font-weight:700">Privacy</a> ·
+    <a href="terms.html" style="color:var(--mute);font-weight:700">Terms</a>
+  </footer>
+</div>
+
+<script>
+/* ---------- CPI-indexed floor ----------
+   Values below are the fallback. On load we fetch /api/indexes for the
+   current CPI-U and recompute. If that fails, these stand. */
+const BASE_1992 = 140.3;
+let CPI_NOW = 330.0;
+let FLOOR = 0;
+const WEEKS_MULT = 0.5;
+
+const $   = id => document.getElementById(id);
+const usd = n  => '$' + Math.round(n).toLocaleString('en-US');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function setFloor(){
+  FLOOR = Math.round(1000 * (CPI_NOW / BASE_1992) / 10) * 10;
+  $('floor').textContent = usd(FLOOR);
+}
+setFloor();
+
+fetch('/api/indexes')
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(d => {
+    if (!d.cpi || !d.cpi.value) return;
+    CPI_NOW = d.cpi.value;
+    setFloor();
+    if (d.cpi.as_of){
+      const el = document.getElementById('floorAsOf');
+      if (el) el.textContent = 'Price data through ' +
+        new Date(d.cpi.as_of + 'T00:00:00').toLocaleDateString('en-US',
+          {month:'long', year:'numeric'}) + '.';
+    }
+    if (target) compute();   /* re-run if they've already entered a figure */
+  })
+  .catch(() => {});
+
+/* ---------- text size ---------- */
+document.querySelectorAll('.tsize .set button').forEach(b =>
+  b.addEventListener('click', () => {
+    document.body.classList.remove('t-lg','t-xl');
+    if (b.dataset.t) document.body.classList.add(b.dataset.t);
+    document.querySelectorAll('.tsize .set button').forEach(x => x.setAttribute('aria-pressed', x===b));
+  }));
+
+/* ---------- field map ---------- */
+const GROUPS = [
+  { t:'Roof over your head', b:'', items:[
+    {id:'rent',  l:'Rent',                       per:'mo', ten:'rent'},
+    {id:'rins',  l:'Renters insurance',          per:'mo', ten:'rent'},
+    {id:'mort',  l:'Mortgage payment',           per:'mo', ten:'own', s:'The whole amount that leaves your account each month.'},
+    {ask:true,   id:'escrow', ten:'own',
+      l:'Does that payment include your taxes and insurance?',
+      s:'Most mortgages bundle them in. If yours does, we should not count them twice.'},
+    {id:'hins',  l:'Home insurance',             per:'yr', ten:'own'},
+    {id:'ptax',  l:'Property tax',               per:'yr', ten:'own'},
+    {id:'pmi',   l:'Mortgage insurance (PMI)',   per:'mo', ten:'own', s:'Only if it is billed separately. It is usually inside the payment.'},
+    {id:'hoa',   l:'HOA or condo fee',           per:'mo'},
+    {id:'upkeep',l:'Home upkeep',                per:'yr', ten:'own', s:'Softener salt, furnace filters, gutters, small repairs.'},
+  ]},
+  { t:'Utilities', b:'Some of these arrive every two or three months. Enter what a normal year costs and switch to Year.', items:[
+    {id:'elec', l:'Electric',                    per:'mo'},
+    {id:'heat', l:'Gas or heating',              per:'mo'},
+    {id:'watr', l:'Water, sewer, trash',         per:'mo'},
+    {id:'net',  l:'Internet',                    per:'mo'},
+    {id:'cell', l:'Phone',                       per:'mo'},
+  ]},
+  { t:'Getting around', q:'Do you have a car?',
+    b:'A car costs more than the payment and the gas. Here is the whole picture.', items:[
+    {id:'cpay', l:'Car payment',                 per:'mo'},
+    {id:'cins', l:'Car insurance',               per:'mo', s:'Many people pay this twice a year. Switch to Year if that is you.'},
+    {id:'fuel', l:'Gas or charging',             per:'mo'},
+    {id:'oil',  l:'Oil changes',                 per:'yr', s:'Most people get two or three a year.'},
+    {id:'tire', l:'Tires',                       per:'yr', s:'A set lasts three to four years. Take the price and divide.'},
+    {id:'brak', l:'Brakes and repairs',          per:'yr', s:'Brake pads, battery, wipers, the surprise ones.'},
+    {id:'creg', l:'Registration and plates',     per:'yr'},
+    {id:'insp', l:'Inspection or emissions',     per:'yr', s:'Some states only. Skip if yours does not.'},
+    {id:'park', l:'Parking and tolls',           per:'mo'},
+    {id:'trns', l:'Bus or train pass',           per:'mo'},
+  ]},
+  { t:'Food', b:'', items:[
+    {id:'groc', l:'Groceries',                   per:'mo'},
+    {id:'out',  l:'Eating out',                  per:'mo'},
+  ]},
+  { t:'Body and mind', q:'Do you pay for health or fitness out of pocket?', b:'', items:[
+    {id:'hlth', l:'Health insurance',            per:'mo', s:'Only if it is not taken out of your paycheck.'},
+    {id:'rx',   l:'Prescriptions and copays',    per:'mo'},
+    {id:'supp', l:'Supplements and vitamins',    per:'mo'},
+    {id:'move', l:'Gym, yoga, classes',          per:'mo'},
+  ]},
+  { t:'The rest of life', b:'', items:[
+    {id:'strm', l:'Streaming and subscriptions', per:'mo', s:'Netflix, music, games, apps.'},
+    {id:'pets', l:'Pets',                        per:'mo', s:'Food, litter, vet visits.'},
+    {id:'care', l:'Haircuts and personal care',  per:'mo'},
+    {id:'amem', l:'Yearly memberships',          per:'yr', s:'The ones that charge you once a year.'},
+  ]},
+  { t:'Once a year, all at once', b:'This is where budgets break. We split these across 12 months so December does not hurt.', items:[
+    {id:'xmas', l:'Holidays and gifts',          per:'yr', s:'What you actually spent last December.'},
+    {id:'bday', l:'Birthdays and weddings',      per:'yr'},
+    {id:'trip', l:'Travel',                      per:'yr'},
+    {id:'tax',  l:'Tax filing or accountant',    per:'yr'},
+  ]},
+  { t:'Smallest debt payments', q:'Do you owe money on anything right now?',
+    b:'Just the minimum. We will deal with the rest in Step 2.', items:[
+    {id:'card', l:'Credit card minimums',        per:'mo'},
+    {id:'stud', l:'Student loan',                per:'mo'},
+    {id:'loan', l:'Any other loan',              per:'mo'},
+  ]},
+];
+
+const host = $('groups');
+const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+             'stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+             '<polyline points="9 18 15 12 9 6"/></svg>';
+
+GROUPS.forEach((g, gi) => {
+  const wrap = document.createElement('div');
+  wrap.className = 'grp';
+  wrap.dataset.gi = gi;
+
+  const head = document.createElement('button');
+  head.className = 'ghead';
+  head.type = 'button';
+  head.setAttribute('aria-expanded', 'false');
+  head.innerHTML = '<span class="gname">' + g.t + '</span>' +
+                   '<span class="gsum" id="gs_' + gi + '">Nothing yet</span>' + CHEV;
+  wrap.appendChild(head);
+
+  const bodyEl = document.createElement('div');
+  bodyEl.className = 'gbody';
+
+  if (g.q){
+    const gate = document.createElement('div');
+    gate.className = 'gate';
+    gate.id = 'gate_' + gi;
+    gate.innerHTML = '<p class="gq">' + g.q + '</p>' +
+      '<div class="gopts"><button type="button" data-gate="yes">Yes</button>' +
+      '<button type="button" data-gate="no">No, skip this</button></div>';
+    bodyEl.appendChild(gate);
+  }
+
+  const inner = document.createElement('div');
+  inner.className = 'ginner';
+  if (g.q) inner.hidden = true;
+  if (g.b) inner.innerHTML = '<p class="blurb">' + g.b + '</p>';
+
+  const rows = document.createElement('div');
+  rows.className = 'rows';
+  g.items.forEach(it => {
+    const r = document.createElement('div');
+    r.className = 'row';
+    if (it.ten) r.dataset.ten = it.ten;
+
+    if (it.ask){
+      r.classList.add('askrow');
+      r.innerHTML =
+        '<label id="lbl_' + it.id + '">' + it.l + '</label>' +
+        '<span class="sub">' + it.s + '</span>' +
+        '<div class="pills three" id="ask_' + it.id + '" role="group" aria-labelledby="lbl_' + it.id + '">' +
+          '<button data-v="yes" aria-pressed="false">Yes</button>' +
+          '<button data-v="no" aria-pressed="false">No</button>' +
+          '<button data-v="idk" aria-pressed="false">Not sure</button>' +
+        '</div>' +
+        '<div class="askhelp" id="help_' + it.id + '" hidden>' +
+          'Look at your mortgage statement for the word <b>escrow</b>. If you see it, taxes and ' +
+          'insurance are inside your payment.<br><br>Another way to tell: if your monthly amount is ' +
+          'noticeably larger than principal and interest alone, it is almost certainly bundled. ' +
+          'When in doubt, choose <b>Yes</b> — undercounting is safer here than counting twice.' +
+        '</div>';
+      rows.appendChild(r);
+      return;
+    }
+
+    r.innerHTML =
+      '<label for="f_' + it.id + '">' + it.l + '</label>' +
+      (it.s ? '<span class="sub">' + it.s + '</span>' : '') +
+      '<div class="field"><div class="money-in"><span>$</span>' +
+        '<input type="number" id="f_' + it.id + '" class="part" data-per="' + it.per +
+        '" inputmode="numeric" placeholder="0" min="0"></div>' +
+        '<div class="seg" role="group" aria-label="' + it.l + ', month or year">' +
+          '<button data-p="mo" aria-pressed="' + (it.per==='mo') + '">Month</button>' +
+          '<button data-p="yr" aria-pressed="' + (it.per==='yr') + '">Year</button>' +
+        '</div></div>' +
+      '<span class="conv" id="c_' + it.id + '"></span>';
+    rows.appendChild(r);
+  });
+  inner.appendChild(rows);
+
+  const nxt = document.createElement('button');
+  nxt.className = 'gnext';
+  nxt.type = 'button';
+  nxt.dataset.next = gi;
+  nxt.textContent = gi === GROUPS.length - 1 ? 'Done — show my number' : 'Next section';
+  inner.appendChild(nxt);
+
+  const skip = document.createElement('button');
+  skip.className = 'gskip';
+  skip.type = 'button';
+  skip.dataset.skip = gi;
+  skip.textContent = 'None of these apply to me';
+  inner.appendChild(skip);
+
+  bodyEl.appendChild(inner);
+  wrap.appendChild(bodyEl);
+  host.appendChild(wrap);
+});
+
+/* ---------- open / close ---------- */
+function openGroup(gi, scroll){
+  document.querySelectorAll('.grp').forEach(el => {
+    const on = +el.dataset.gi === gi;
+    el.classList.toggle('open', on);
+    el.querySelector('.ghead').setAttribute('aria-expanded', on);
+  });
+  $('gprog').textContent = gi < 0
+    ? 'All ' + GROUPS.length + ' sections'
+    : 'Section ' + (gi + 1) + ' of ' + GROUPS.length;
+  if (scroll && gi >= 0){
+    const el = document.querySelector('.grp[data-gi="' + gi + '"]');
+    setTimeout(() => el.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block:'start'}), 40);
+  }
+}
+
+/* ---------- skipping ---------- */
+const skipped = new Set();
+
+function markSkipped(gi, on){
+  const grp = document.querySelector('.grp[data-gi="' + gi + '"]');
+  on ? skipped.add(gi) : skipped.delete(gi);
+  grp.classList.toggle('skipped', on);
+  if (on){
+    grp.querySelectorAll('.part').forEach(f => {
+      f.value = ''; const c = $('c_' + f.id.slice(2)); if (c) c.textContent = '';
+    });
+    const el = $('gs_' + gi);
+    el.textContent = 'Skipped — does not apply';
+    el.classList.remove('has');
+    let undo = grp.querySelector('.gundo');
+    if (!undo){
+      undo = document.createElement('button');
+      undo.type = 'button'; undo.className = 'gundo'; undo.dataset.undo = gi;
+      undo.textContent = 'Actually, let me fill this in';
+      grp.querySelector('.gbody').appendChild(undo);
+    }
+    undo.hidden = false;
+    grp.querySelector('.ginner').hidden = true;
+    const gate = $('gate_' + gi); if (gate) gate.hidden = true;
+  } else {
+    const undo = grp.querySelector('.gundo'); if (undo) undo.hidden = true;
+    grp.querySelector('.ginner').hidden = false;
+    const gate = $('gate_' + gi); if (gate) gate.hidden = true;
+  }
+  tally();
+}
+
+function nextOpen(from){
+  for (let i = from; i < GROUPS.length; i++) if (!skipped.has(i)) return i;
+  return -1;
+}
+
+host.addEventListener('click', e => {
+  const gateBtn = e.target.closest('[data-gate]');
+  if (gateBtn){
+    const gi = +gateBtn.closest('.grp').dataset.gi;
+    if (gateBtn.dataset.gate === 'no'){ markSkipped(gi, true); advance(gi); }
+    else { $('gate_' + gi).hidden = true;
+           document.querySelector('.grp[data-gi="' + gi + '"] .ginner').hidden = false; }
+    return;
+  }
+  const sk = e.target.closest('[data-skip]');
+  if (sk){ const gi = +sk.dataset.skip; markSkipped(gi, true); advance(gi); return; }
+
+  const un = e.target.closest('[data-undo]');
+  if (un){ markSkipped(+un.dataset.undo, false); return; }
+
+  const head = e.target.closest('.ghead');
+  if (head){
+    const grp = head.closest('.grp');
+    const isOpen = grp.classList.contains('open');
+    openGroup(isOpen ? -1 : +grp.dataset.gi, !isOpen);
+    return;
+  }
+  const nxt = e.target.closest('.gnext');
+  if (nxt) advance(+nxt.dataset.next);
+});
+
+function advance(gi){
+  const n = nextOpen(gi + 1);
+  if (n === -1){
+    openGroup(-1, false);
+    $('result').scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block:'center'});
+  } else openGroup(n, true);
+}
+
+openGroup(0, false);
+
+host.addEventListener('click', e => {
+  const b = e.target.closest('.seg button'); if (!b) return;
+  const seg = b.parentElement;
+  const input = seg.parentElement.querySelector('input');
+  input.dataset.per = b.dataset.p;
+  seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  showConv(input); tally();
+});
+
+/* ---------- escrow: don't count taxes and insurance twice ---------- */
+const ESCROWED = ['hins','ptax'];   /* the two a mortgage normally bundles */
+let escrow = null;
+
+host.addEventListener('click', e => {
+  const b = e.target.closest('.pills.three button'); if (!b) return;
+  escrow = b.dataset.v;
+  b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  $('help_escrow').hidden = escrow !== 'idk';
+  applyEscrow();
+  tally();
+});
+
+function applyEscrow(){
+  const bundled = escrow === 'yes';
+  ESCROWED.forEach(id => {
+    const f = $('f_' + id); if (!f) return;
+    const row = f.closest('.row');
+    row.classList.toggle('hide-esc', bundled);
+    if (bundled){ f.value = ''; $('c_' + id).textContent = ''; }
+  });
+  let lock = document.getElementById('escLock');
+  if (bundled){
+    if (!lock){
+      lock = document.createElement('p');
+      lock.id = 'escLock'; lock.className = 'rowlock';
+      lock.textContent = 'Good — home insurance and property tax are already inside that payment, so we left them out.';
+      $('ask_escrow').closest('.row').appendChild(lock);
+    }
+    lock.hidden = false;
+  } else if (lock) lock.hidden = true;
+}
+
+function showConv(input){
+  const el = $('c_' + input.id.slice(2));
+  const v = parseFloat(input.value) || 0;
+  if (!v){ el.textContent = ''; return; }
+  el.textContent = input.dataset.per === 'yr'
+    ? '= ' + usd(v / 12) + ' a month'
+    : '= ' + usd(v * 12) + ' a year';
+}
+
+document.addEventListener('input', e => {
+  if (!e.target.classList.contains('part')) return;
+  showConv(e.target); tally();
+});
+
+let lastTarget = 0;
+
+function tally(){
+  let sum = 0, done = 0;
+  document.querySelectorAll('.grp').forEach(grp => {
+    const gi = +grp.dataset.gi;
+    if (skipped.has(gi)){ done++; return; }
+    let gsum = 0, filled = 0;
+    grp.querySelectorAll('.part').forEach(f => {
+      const row = f.closest('.row');
+      if (row.classList.contains('hide') || row.classList.contains('hide-esc')) return;
+      const v = parseFloat(f.value) || 0;
+      if (!v) return;
+      filled++;
+      gsum += f.dataset.per === 'yr' ? v / 12 : v;
+    });
+    sum += gsum;
+    const el = $('gs_' + gi);
+    if (el){
+      el.textContent = filled ? usd(gsum) + ' a month' : 'Nothing yet';
+      el.classList.toggle('has', filled > 0);
+    }
+    grp.classList.toggle('done', filled > 0);
+    if (filled) done++;
+  });
+
+  $('running').innerHTML = usd(sum) + ' <span class="u">a month</span>';
+  $('gprogDone') && ($('gprogDone').textContent = done);
+
+  if (sum > 0){
+    mainPer = 'mo'; setMainSeg();
+    $('essentials').value = Math.round(sum);
+    compute();
+  }
+  meter(sum, done);
+}
+
+/* pinned meter: show the safety number moving, not just the sum */
+function meter(sum, done){
+  const m = $('meter');
+  m.classList.toggle('on', sum > 0);
+  if (sum <= 0){ lastTarget = 0; return; }
+  const t = Math.max(sum * WEEKS_MULT, FLOOR);
+  $('mVal').textContent = usd(t);
+  $('mSub').textContent = done + ' of ' + GROUPS.length + ' sections · ' +
+                          usd(sum) + ' a month in bills';
+  const d = t - lastTarget;
+  const el = $('mDelta');
+  if (lastTarget && Math.abs(d) >= 1){
+    el.textContent = (d > 0 ? '↑ ' : '↓ ') + usd(Math.abs(d));
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 2200);
+  }
+  lastTarget = t;
+}
+
+/* ---------- which path ---------- */
+function showWalk(){
+  $('choice').hidden = true; $('quickField').hidden = true; $('walk').hidden = false;
+  $('walk').scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block:'start'});
+}
+function showQuick(){
+  $('choice').hidden = true; $('walk').hidden = true; $('quickField').hidden = false;
+  setTimeout(() => $('essentials').focus({preventScroll:true}), 120);
+}
+$('cWalk').addEventListener('click', showWalk);
+$('cKnow').addEventListener('click', showQuick);
+$('switchWalk').addEventListener('click', showWalk);
+$('switchQuick').addEventListener('click', showQuick);
+
+/* ---------- tenure ---------- */
+let tenure = null;
+document.querySelectorAll('.pill').forEach(p =>
+  p.addEventListener('click', () => {
+    tenure = p.dataset.ten;
+    document.querySelectorAll('.pill').forEach(x => x.setAttribute('aria-pressed', x === p));
+    document.querySelectorAll('.row[data-ten]').forEach(r => {
+      const on = r.dataset.ten === tenure;
+      r.classList.toggle('hide', !on);
+      if (on) return;
+      const f = r.querySelector('input');          /* ask-rows have none */
+      if (f){ f.value = ''; const c = $('c_' + f.id.slice(2)); if (c) c.textContent = ''; }
+      const ask = r.querySelector('.pills.three');
+      if (ask){
+        escrow = null;
+        ask.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+        $('help_escrow').hidden = true;
+        applyEscrow();
+      }
+    });
+    tally();
+  }));
+document.querySelectorAll('.row[data-ten]').forEach(r => r.classList.add('hide'));
+
+/* ---------- main field period ---------- */
+let mainPer = 'mo';
+function setMainSeg(){
+  $('mainSeg').querySelectorAll('button')
+    .forEach(b => b.setAttribute('aria-pressed', b.dataset.p === mainPer));
+}
+$('mainSeg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  mainPer = b.dataset.p; setMainSeg(); compute();
+});
+
+/* ---------- math ---------- */
+const essentials = $('essentials'), savedIn = $('saved');
+let target = 0;
+essentials.addEventListener('input', compute);
+savedIn.addEventListener('input', drawBar);
+
+function compute(){
+  const raw = parseFloat(essentials.value) || 0;
+  const monthly = mainPer === 'yr' ? raw / 12 : raw;
+  $('mainConv').textContent = raw
+    ? (mainPer === 'yr' ? '= ' + usd(monthly) + ' a month' : '= ' + usd(raw * 12) + ' a year')
+    : '';
+  if (monthly <= 0){ $('result').hidden = true; $('progress-sec').hidden = true; return; }
+
+  const personal = monthly * WEEKS_MULT;
+  target = Math.max(personal, FLOOR);
+  $('result').hidden = false;
+  $('progress-sec').hidden = false;
+  $('figure').textContent = usd(target);
+  $('basis').textContent = personal >= FLOOR
+    ? 'Two weeks of your bills. Your bills are higher than average, so we used yours.'
+    : 'The national floor, kept current with prices. It is higher than two weeks of your bills, so we used it.';
+  drawBar();
+}
+
+function drawBar(){
+  if (!target) return;
+  const have = parseFloat(savedIn.value) || 0;
+  const pct = Math.min(100, (have / target) * 100);
+  $('fill').style.width = pct + '%';
+  $('gap').innerHTML = have >= target
+    ? "You're there. <b>Step 1 is done.</b>"
+    : "You're <b>" + Math.round(pct) + "%</b> there. <b>" + usd(target - have) + "</b> to go.";
+}
+
+/* ---------- your file, your machine ----------
+   Schema v4. Debts live in their own array so later steps can fill in
+   balance and apr on the same objects without a migration:
+     Step 1 writes `minimum` (cash out the door each month)
+     Step 2 writes `balance` + `apr`, and may split one line into several
+     Goal engine reads the array instead of asking again
+   `kind` is the stable key; `label` is user-facing and editable later. */
+const DEBT_LINES = [
+  { field:'card', kind:'card',    label:'Credit cards' },
+  { field:'stud', kind:'student', label:'Student loan' },
+  { field:'loan', kind:'other',   label:'Other loan'   },
+];
+
+function collectDebts(){
+  return DEBT_LINES.map(d => {
+    const f = $('f_' + d.field);
+    const raw = parseFloat(f.value) || 0;
+    if (!raw) return null;
+    return {
+      id: 'd_' + d.kind,
+      kind: d.kind,
+      label: d.label,
+      minimum: f.dataset.per === 'yr' ? +(raw / 12).toFixed(2) : raw,
+      balance: null,        /* Step 2 fills these */
+      apr: null,
+      from_step: 1
+    };
+  }).filter(Boolean);
+}
+
+/* debt minimums are already inside `essentials`; they're mirrored into
+   `debts` for later steps, so don't add them twice when reading back */
+$('save').addEventListener('click', () => {
+  const fields = {};
+  document.querySelectorAll('.part').forEach(f => {
+    const v = parseFloat(f.value) || 0;
+    if (v) fields[f.id.slice(2)] = { v, per: f.dataset.per };
+  });
+  const data = { v:4, step:1, saved_at:new Date().toISOString(), tenure, escrow,
+    essentials_value: parseFloat(essentials.value) || 0, essentials_per: mainPer,
+    cash_on_hand: parseFloat(savedIn.value) || 0,
+    target_at_save: target, cpi_used: CPI_NOW,
+    fields,
+    debts: collectDebts(),
+    goals: [] };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  Object.assign(document.createElement('a'), {href:url, download:'my-ladder.json'}).click();
+  URL.revokeObjectURL(url);
+});
+
+$('loadBtn').addEventListener('click', () => $('loadFile').click());
+$('loadFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if (d.tenure) document.querySelector('.pill[data-ten="' + d.tenure + '"]').click();
+      if (d.escrow) document.querySelector('#ask_escrow button[data-v="' + d.escrow + '"]').click();
+      Object.entries(d.fields || {}).forEach(([k, o]) => {
+        const el = $('f_' + k); if (!el) return;
+        el.value = o.v;
+        el.dataset.per = o.per || 'mo';
+        el.closest('.field').querySelectorAll('.seg button').forEach(b =>
+          b.setAttribute('aria-pressed', b.dataset.p === el.dataset.per));
+        showConv(el);
+      });
+      if (Object.keys(d.fields || {}).length) showWalk(); else showQuick();
+      tally();
+      mainPer = d.essentials_per || 'mo'; setMainSeg();
+      essentials.value = d.essentials_value ?? d.essentials_monthly ?? '';
+      savedIn.value = d.cash_on_hand || '';
+      compute();
+    } catch { alert("That file didn't open. Pick the my-ladder.json file you saved."); }
+  };
+  r.readAsText(f);
+});
+</script>
+</body>
+</html>
